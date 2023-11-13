@@ -6,18 +6,15 @@ import time
 url = 'https://rutgersnewarkathletics.com/sports/mens-volleyball/stats'
 driver = webdriver.Chrome()
 driver.get(url)
-
-# Wait for the page to load
 time.sleep(5)
 
 page_source = driver.page_source
 driver.quit()
 soup = BeautifulSoup(page_source, 'html.parser')
 
-# Find all rows with class 'odd' or 'even' within the 'individual-overall-offensive' section
-player_rows = soup.select('section#individual-overall-offensive table.sidearm-table tbody tr.odd, section#individual-overall-offensive table.sidearm-table tbody tr.even')
+# Find all rows with class 'odd' or 'even' within the 'individual-overall-defensive' section
+player_rows = soup.select('section#individual-overall-defensive table.sidearm-table tbody tr.odd, section#individual-overall-defensive table.sidearm-table tbody tr.even')
 
-# Initialize an empty list to store player data
 player_data = []
 
 # Iterate through player rows and extract information
@@ -33,23 +30,29 @@ for row in player_rows:
     # Extract all other columns in the row
     columns = row.find_all('td')[2:]
 
-    # Extract only the relevant columns for player statistics
-    player_info = [name] + [jersey_number] + [column.text.strip() for column in columns]
+    # Extract only the relevant columns for defensive statistics
+    player_info = [name, jersey_number] + [column.text.strip() for column in columns]
     player_data.append(player_info)
 
-df = pd.DataFrame(player_data)
+# Create a DataFrame from the extracted data
+dfRutgersNewark = pd.DataFrame(player_data)
 
 # Rename columns for better readability
-df.columns = ['Name', 'Jersey Number', 'Sets Played', 'Matches Played', 'Matches Started', 'Points', 'Points/Set', 'Kills', 'Kills/Set' , 'Errors', 'Total Attempts', 'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces', 'Services Aces/Set', 'Service Errors', 'ViewBio']
+dfRutgersNewark.columns = ['Name', 'Jersey Number', 'Sets Played', 'Digs', 'Digs/Set', 'Reception Error', 'Total Reception Attempts', 'Reception Percentage', 'Reception Errors/Set', 'Solo Blocks', 'Block Assist', 'Block Points', 'Blocks/Set', 'Block Errors', 'BHE', 'ViewBio']
+
 
 # Drop 'ViewBio' from being parsed
-df = df.drop("ViewBio", axis=1)
+dfRutgersNewark = dfRutgersNewark.drop("ViewBio", axis=1)
+
 
 # Set the index to 'RUTGERS' for all rows
-df['Team'] = 'RUTGERS'
-df.set_index('Team', inplace=True)
+dfRutgersNewark['Team'] = 'RUTGERS'
+dfRutgersNewark.set_index('Team', inplace=True)
+
+# Print the DataFrame
+print(dfRutgersNewark)
 
 
-print(df)
 
-df.to_csv('RutgersNewarkIndividualStats.csv')
+
+
