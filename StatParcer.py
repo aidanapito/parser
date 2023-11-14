@@ -30,7 +30,7 @@ def scrapeTeamStats_RutgersNewark(url):
 
         # Extract the 'Name' column and split into first and last names
         full_name = row.select_one('td:nth-of-type(2)').text.strip().split('\n')[0]
-        first_name, last_name = full_name.split(', ')
+        last_name, first_name = full_name.split(', ')
         name = f'{first_name} {last_name}'
 
         # Extract all other columns in the row
@@ -527,9 +527,88 @@ def scrapeTeamStats_Roanoke(url):
 scrapeTeamStats_Roanoke('https://roanokemaroons.com/sports/mens-volleyball/stats') 
 #-----------------------------------------------------------------------RoanokeDone------------------------------------------------------
 
-#CVC END
+def scrapeTeamStats_Elizabethtown(url):
+    driver = webdriver.Chrome()
+    driver.get(url)
+    time.sleep(5)
 
+    page_source = driver.page_source
+    driver.quit()
+    soup = BeautifulSoup(page_source, 'html.parser')
 
+    # Find all rows with class 'odd' or 'even' within both the offensive and defensive sections
+    all_player_rows = soup.select('section#individual-overall-offensive table.sidearm-table tbody tr.odd, section#individual-overall-offensive table.sidearm-table tbody tr.even, section#individual-overall-defensive table.sidearm-table tbody tr.odd, section#individual-overall-defensive table.sidearm-table tbody tr.even')
+
+    # Initialize empty lists to store player data for offense and defense
+    player_data_offense = []
+    player_data_defense = []
+
+    # Iterate through player rows and extract information for offense and defense
+    for row in all_player_rows:
+        # Extract the player's name
+        full_name = row.select_one('td:nth-of-type(2)').text.strip().split('\n')[0]
+
+        # Check if the full name is in the expected format
+        if ', ' in full_name:
+            first_name, last_name = full_name.split(', ')
+            name = f'{first_name} {last_name}'
+        else:
+            # Handle the case where the full name is not in the expected format
+            name = full_name
+
+        # Determine whether the row belongs to offense or defense
+        if any('offensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
+            # This is an offense row
+            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
+            # Extract other columns for offense
+
+            # Combine the data into a single list for offense
+            player_info_offense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_offense.append(player_info_offense)
+
+        elif any('defensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
+            # This is a defense row
+            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
+            # Extract other columns for defense
+
+            # Combine the data into a single list for defense
+            player_info_defense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_defense.append(player_info_defense)
+
+    # Create separate DataFrames for offense and defense with specified columns
+    offense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Matches Played', 'Matches Started',
+                    'Points', 'Points/Set', 'Kills', 'Kills/Set', 'Errors', 'Total Attempts',
+                    'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces',
+                    'Services Aces/Set', 'Service Errors', 'ViewBio']
+    defense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Digs', 'Digs/Set', 'Reception Error',
+                    'Total Reception Attempts', 'Reception Percentage', 'Reception Errors/Set',
+                    'Solo Blocks', 'Block Assist', 'Block Points', 'Blocks/Set', 'Block Errors',
+                    'BHE', 'ViewBio']
+
+    # Initialize empty DataFrames with specified columns
+    dfElizabethtownOffense = pd.DataFrame(columns=offense_columns)
+    dfElizabethtownDefense = pd.DataFrame(columns=defense_columns)
+
+    # Populate DataFrames with player data for offense and defense
+    dfElizabethtownOffense = pd.concat([dfElizabethtownOffense, pd.DataFrame(player_data_offense, columns=offense_columns)], ignore_index=True)
+    dfElizabethtownDefense = pd.concat([dfElizabethtownDefense, pd.DataFrame(player_data_defense, columns=defense_columns)], ignore_index=True)
+
+    # Drop unnecessary columns from defense DataFrame
+    dfElizabethtownDefense = dfElizabethtownDefense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
+    dfElizabethtownOffense = dfElizabethtownOffense.drop(["ViewBio"], axis=1)
+
+    # Combine both DataFrames horizontally (next to each other)
+    dfElizabethtownCombinedStats = pd.concat([dfElizabethtownOffense, dfElizabethtownDefense], axis=1)
+
+    # Set the index to 'Elizabethtown' for all rows
+    dfElizabethtownCombinedStats['Team'] = 'Elizabethtown'
+    dfElizabethtownCombinedStats.set_index('Team', inplace=True)
+
+    dfElizabethtownCombinedStats.to_csv('ElizabethtownCombinedStats.csv', header=False)
+
+    return dfElizabethtownCombinedStats
+scrapeTeamStats_Elizabethtown('https://etownbluejays.com/sports/mens-volleyball/stats/2023#individual') #change
+#----------------------------------------------------------------------Elizabethtown Done----------------------------------------------------------
 
 dfRutgersNewarkedCombinedStats = scrapeTeamStats_RutgersNewark('https://rutgersnewarkathletics.com/sports/mens-volleyball/stats')
 dfSouthernVirginiaCombinedStats = scrapeTeamStats_SouthernVirginia('https://knightathletics.com/sports/mens-volleyball/stats')
@@ -537,8 +616,184 @@ dfKeanCombinedStats = scrapeTeamStats_Kean('https://keanathletics.com/sports/men
 dfMarymountCombinedStats = scrapeTeamStats_Marymount('https://marymountsaints.com/sports/mens-volleyball/stats')
 dfRandolphMaconCombinedStats = scrapeTeamStats_RandolphMacon('https://rmcathletics.com/sports/mens-volleyball/stats/2023') #change to 2024 when new season starts
 dfRoanokeCombinedStats = scrapeTeamStats_Roanoke('https://roanokemaroons.com/sports/mens-volleyball/stats')
+dfElizabethtownCombinedStats = scrapeTeamStats_Elizabethtown('https://etownbluejays.com/sports/mens-volleyball/stats/2023#individual') #change
+#CVC END
 
-def combineTeamStats(dfRutgersNewarkedCombinedStats, dfSouthernVirginiaCombinedStats, dfKeanCombinedStats, dfMarymountCombinedStats, dfRandolphMaconCombinedStats, dfRoanokeCombinedStats):
+#UVC START
+def scrapeTeamStats_MIT(url):
+    driver = webdriver.Chrome()
+    driver.get(url)
+    time.sleep(5)
+
+    page_source = driver.page_source
+    driver.quit()
+    soup = BeautifulSoup(page_source, 'html.parser')
+
+    # Find all rows with class 'odd' or 'even' within both the offensive and defensive sections
+    all_player_rows = soup.select('section#individual-overall-offensive table.sidearm-table tbody tr.odd, section#individual-overall-offensive table.sidearm-table tbody tr.even, section#individual-overall-defensive table.sidearm-table tbody tr.odd, section#individual-overall-defensive table.sidearm-table tbody tr.even')
+
+    # Initialize empty lists to store player data for offense and defense
+    player_data_offense = []
+    player_data_defense = []
+
+    # Iterate through player rows and extract information for offense and defense
+    for row in all_player_rows:
+        # Extract the player's name
+        full_name = row.select_one('td:nth-of-type(2)').text.strip().split('\n')[0]
+
+        # Check if the full name is in the expected format
+        if ', ' in full_name:
+            first_name, last_name = full_name.split(', ')
+            name = f'{first_name} {last_name}'
+        else:
+            # Handle the case where the full name is not in the expected format
+            name = full_name
+
+        # Determine whether the row belongs to offense or defense
+        if any('offensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
+            # This is an offense row
+            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
+            # Extract other columns for offense
+
+            # Combine the data into a single list for offense
+            player_info_offense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_offense.append(player_info_offense)
+
+        elif any('defensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
+            # This is a defense row
+            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
+            # Extract other columns for defense
+
+            # Combine the data into a single list for defense
+            player_info_defense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_defense.append(player_info_defense)
+
+    # Create separate DataFrames for offense and defense with specified columns
+    offense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Matches Played', 'Matches Started',
+                    'Points', 'Points/Set', 'Kills', 'Kills/Set', 'Errors', 'Total Attempts',
+                    'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces',
+                    'Services Aces/Set', 'Service Errors', 'ViewBio']
+    defense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Digs', 'Digs/Set', 'Reception Error',
+                    'Total Reception Attempts', 'Reception Percentage', 'Reception Errors/Set',
+                    'Solo Blocks', 'Block Assist', 'Block Points', 'Blocks/Set', 'Block Errors',
+                    'BHE', 'ViewBio']
+
+    # Initialize empty DataFrames with specified columns
+    dfMITOffense = pd.DataFrame(columns=offense_columns)
+    dfMITDefense = pd.DataFrame(columns=defense_columns)
+
+    # Populate DataFrames with player data for offense and defense
+    dfMITOffense = pd.concat([dfMITOffense, pd.DataFrame(player_data_offense, columns=offense_columns)], ignore_index=True)
+    dfMITDefense = pd.concat([dfMITDefense, pd.DataFrame(player_data_defense, columns=defense_columns)], ignore_index=True)
+
+    # Drop unnecessary columns from defense DataFrame
+    dfMITDefense = dfMITDefense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
+    dfMITOffense = dfMITOffense.drop(["ViewBio"], axis=1)
+
+    # Combine both DataFrames horizontally (next to each other)
+    dfMITCombinedStats = pd.concat([dfMITOffense, dfMITDefense], axis=1)
+
+    # Set the index to 'MIT' for all rows
+    dfMITCombinedStats['Team'] = 'MIT'
+    dfMITCombinedStats.set_index('Team', inplace=True)
+
+    dfMITCombinedStats.to_csv('MITCombinedStats.csv', header=False)
+
+    return dfMITCombinedStats
+scrapeTeamStats_MIT('https://mitathletics.com/sports/mens-volleyball/stats/2022') #change
+#--------------------------------------------------------------------MIT DONE----------------------------------------------------------------------
+
+def scrapeTeamStats_Nazareth(url):
+    driver = webdriver.Chrome()
+    driver.get(url)
+    time.sleep(5)
+
+    page_source = driver.page_source
+    driver.quit()
+    soup = BeautifulSoup(page_source, 'html.parser')
+
+    # Find all rows with class 'odd' or 'even' within both the offensive and defensive sections
+    all_player_rows = soup.select('section#individual-overall-offensive table.sidearm-table tbody tr.odd, section#individual-overall-offensive table.sidearm-table tbody tr.even, section#individual-overall-defensive table.sidearm-table tbody tr.odd, section#individual-overall-defensive table.sidearm-table tbody tr.even')
+
+    # Initialize empty lists to store player data for offense and defense
+    player_data_offense = []
+    player_data_defense = []
+
+    # Iterate through player rows and extract information for offense and defense
+    for row in all_player_rows:
+        # Extract the player's name
+        full_name = row.select_one('td:nth-of-type(2)').text.strip().split('\n')[0]
+
+        # Check if the full name is in the expected format
+        if ', ' in full_name:
+            first_name, last_name = full_name.split(', ')
+            name = f'{first_name} {last_name}'
+        else:
+            # Handle the case where the full name is not in the expected format
+            name = full_name
+
+        # Determine whether the row belongs to offense or defense
+        if any('offensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
+            # This is an offense row
+            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
+            # Extract other columns for offense
+
+            # Combine the data into a single list for offense
+            player_info_offense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_offense.append(player_info_offense)
+
+        elif any('defensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
+            # This is a defense row
+            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
+            # Extract other columns for defense
+
+            # Combine the data into a single list for defense
+            player_info_defense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_defense.append(player_info_defense)
+
+    # Create separate DataFrames for offense and defense with specified columns
+    offense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Matches Played', 'Matches Started',
+                    'Points', 'Points/Set', 'Kills', 'Kills/Set', 'Errors', 'Total Attempts',
+                    'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces',
+                    'Services Aces/Set', 'Service Errors', 'ViewBio']
+    defense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Digs', 'Digs/Set', 'Reception Error',
+                    'Total Reception Attempts', 'Reception Percentage', 'Reception Errors/Set',
+                    'Solo Blocks', 'Block Assist', 'Block Points', 'Blocks/Set', 'Block Errors',
+                    'BHE', 'ViewBio']
+
+    # Initialize empty DataFrames with specified columns
+    dfNazarethOffense = pd.DataFrame(columns=offense_columns)
+    dfNazarethDefense = pd.DataFrame(columns=defense_columns)
+
+    # Populate DataFrames with player data for offense and defense
+    dfNazarethOffense = pd.concat([dfNazarethOffense, pd.DataFrame(player_data_offense, columns=offense_columns)], ignore_index=True)
+    dfNazarethDefense = pd.concat([dfNazarethDefense, pd.DataFrame(player_data_defense, columns=defense_columns)], ignore_index=True)
+
+    # Drop unnecessary columns from defense DataFrame
+    dfNazarethDefense = dfNazarethDefense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
+    dfNazarethOffense = dfNazarethOffense.drop(["ViewBio"], axis=1)
+
+    # Combine both DataFrames horizontally (next to each other)
+    dfNazarethCombinedStats = pd.concat([dfNazarethOffense, dfNazarethDefense], axis=1)
+
+    # Set the index to 'Nazareth' for all rows
+    dfNazarethCombinedStats['Team'] = 'Nazareth'
+    dfNazarethCombinedStats.set_index('Team', inplace=True)
+
+    dfNazarethCombinedStats.to_csv('NazarethCombinedStats.csv', header=False)
+
+    return dfNazarethCombinedStats
+scrapeTeamStats_Nazareth('https://nazathletics.com/sports/mens-volleyball/stats/2023#individual')  #change
+#--------------------------------------------------------------------Nazareth DONE -----------------------------------------------------------------
+
+dfMITCombinedStats = scrapeTeamStats_MIT('https://mitathletics.com/sports/mens-volleyball/stats/2022') #change
+dfNazarethCombinedStats = scrapeTeamStats_Nazareth('https://nazathletics.com/sports/mens-volleyball/stats/2023#individual') #change
+#UVC END
+
+
+
+
+def combineTeamStats(dfRutgersNewarkedCombinedStats, dfSouthernVirginiaCombinedStats, dfKeanCombinedStats, dfMarymountCombinedStats, dfRandolphMaconCombinedStats, dfRoanokeCombinedStats, dfElizabethtownCombinedStats, dfMITCombinedStats, dfNazarethCombinedStats):
 
     # Add a new column 'Team' with the respective team names
     dfRutgersNewarkedCombinedStats['Team'] = 'Rutgers Newark'
@@ -547,13 +802,18 @@ def combineTeamStats(dfRutgersNewarkedCombinedStats, dfSouthernVirginiaCombinedS
     dfMarymountCombinedStats['Team'] = 'Marymount'
     dfRandolphMaconCombinedStats['Team'] = 'Randolph Macon'
     dfRoanokeCombinedStats['Team'] = 'Roanoke'
+    dfElizabethtownCombinedStats['Team'] = 'Elizabethtown'
+    dfMITCombinedStats['Team'] = 'MIT'
+    dfNazarethCombinedStats['Team'] = 'Nazareth'
+
+
 
     # Concatenate the DataFrames
-    dfTOTALSTATS = pd.concat([dfRutgersNewarkedCombinedStats, dfSouthernVirginiaCombinedStats, dfKeanCombinedStats, dfMarymountCombinedStats, dfRandolphMaconCombinedStats, dfRoanokeCombinedStats], ignore_index=True)
+    dfTOTALSTATS = pd.concat([dfRutgersNewarkedCombinedStats, dfSouthernVirginiaCombinedStats, dfKeanCombinedStats, dfMarymountCombinedStats, dfRandolphMaconCombinedStats, dfRoanokeCombinedStats, dfElizabethtownCombinedStats, dfMITCombinedStats, dfNazarethCombinedStats], ignore_index=True)
 
     # Save the combined DataFrame to a CSV file
     dfTOTALSTATS.to_csv('CombinedStats.csv', index=False)
     return dfTOTALSTATS
 
 # Call the function with your DataFrames
-dfTOTALSTATS = combineTeamStats(dfRutgersNewarkedCombinedStats, dfSouthernVirginiaCombinedStats, dfKeanCombinedStats, dfMarymountCombinedStats, dfRandolphMaconCombinedStats, dfRoanokeCombinedStats)
+dfTOTALSTATS = combineTeamStats(dfRutgersNewarkedCombinedStats, dfSouthernVirginiaCombinedStats, dfKeanCombinedStats, dfMarymountCombinedStats, dfRandolphMaconCombinedStats, dfRoanokeCombinedStats, dfElizabethtownCombinedStats, dfMITCombinedStats, dfNazarethCombinedStats)
