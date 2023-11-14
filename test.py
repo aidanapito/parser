@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
-def scrapeTeamStats_RandolphMacon(url):
+
+
+def scrapeTeamStats_Roanoke(url):
     driver = webdriver.Chrome()
     driver.get(url)
     time.sleep(5)
@@ -62,25 +64,25 @@ def scrapeTeamStats_RandolphMacon(url):
                     'BHE', 'ViewBio']
 
     # Initialize empty DataFrames with specified columns
-    dfRandolphMaconOffense = pd.DataFrame(columns=offense_columns)
-    dfRandolphMaconDefense = pd.DataFrame(columns=defense_columns)
+    dfRoanokeOffense = pd.DataFrame(columns=offense_columns)
+    dfRoanokeDefense = pd.DataFrame(columns=defense_columns)
 
     # Populate DataFrames with player data for offense and defense
-    dfRandolphMaconOffense = pd.concat([dfRandolphMaconOffense, pd.DataFrame(player_data_offense, columns=offense_columns)], ignore_index=True)
-    dfRandolphMaconDefense = pd.concat([dfRandolphMaconDefense, pd.DataFrame(player_data_defense, columns=defense_columns)], ignore_index=True)
+    dfRoanokeOffense = pd.concat([dfRoanokeOffense, pd.DataFrame(player_data_offense, columns=offense_columns)], ignore_index=True)
+    dfRoanokeDefense = pd.concat([dfRoanokeDefense, pd.DataFrame(player_data_defense, columns=defense_columns)], ignore_index=True)
 
     # Drop unnecessary columns from defense DataFrame
-    dfRandolphMaconDefense = dfRandolphMaconDefense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
-    dfRandolphMaconOffense = dfRandolphMaconOffense.drop(["ViewBio"], axis=1)
+    dfRoanokeDefense = dfRoanokeDefense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
+    dfRoanokeOffense = dfRoanokeOffense.drop(["ViewBio"], axis=1)
 
     # Combine both DataFrames horizontally (next to each other)
-    dfRandolphMaconCombinedStats = pd.concat([dfRandolphMaconOffense, dfRandolphMaconDefense], axis=1)
+    dfRoanokeCombinedStats = pd.concat([dfRoanokeOffense, dfRoanokeDefense], axis=1)
 
-    # Set the index to 'RandolphMacon' for all rows
-    dfRandolphMaconCombinedStats['Team'] = 'RandolphMacon'
-    dfRandolphMaconCombinedStats.set_index('Team', inplace=True)
+    # Set the index to 'Roanoke' for all rows
+    dfRoanokeCombinedStats['Team'] = 'Roanoke'
+    dfRoanokeCombinedStats.set_index('Team', inplace=True)
 
-    dfRandolphMaconCombinedStats.to_csv('RandolphMaconCombinedStats.csv', header=False)
+    dfRoanokeCombinedStats.to_csv('RoanokeCombinedStats.csv', header=False)
 
-    return dfRandolphMaconCombinedStats
-scrapeTeamStats_RandolphMacon('https://rmcathletics.com/sports/mens-volleyball/stats/2023')
+    return dfRoanokeCombinedStats
+scrapeTeamStats_Roanoke('https://roanokemaroons.com/sports/mens-volleyball/stats') #change to 2024
