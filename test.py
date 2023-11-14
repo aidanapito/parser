@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
-def scrapeTeamStats_SouthernVirginia(url):
+def scrapeTeamStats_RandolphMacon(url):
     driver = webdriver.Chrome()
     driver.get(url)
     time.sleep(5)
@@ -62,26 +62,25 @@ def scrapeTeamStats_SouthernVirginia(url):
                     'BHE', 'ViewBio']
 
     # Initialize empty DataFrames with specified columns
-    dfSouthernVirginiaOffense = pd.DataFrame(columns=offense_columns)
-    dfSouthernVirginiaDefense = pd.DataFrame(columns=defense_columns)
+    dfRandolphMaconOffense = pd.DataFrame(columns=offense_columns)
+    dfRandolphMaconDefense = pd.DataFrame(columns=defense_columns)
 
     # Populate DataFrames with player data for offense and defense
-    dfSouthernVirginiaOffense = pd.concat([dfSouthernVirginiaOffense, pd.DataFrame(player_data_offense, columns=offense_columns)], ignore_index=True)
-    dfSouthernVirginiaDefense = pd.concat([dfSouthernVirginiaDefense, pd.DataFrame(player_data_defense, columns=defense_columns)], ignore_index=True)
+    dfRandolphMaconOffense = pd.concat([dfRandolphMaconOffense, pd.DataFrame(player_data_offense, columns=offense_columns)], ignore_index=True)
+    dfRandolphMaconDefense = pd.concat([dfRandolphMaconDefense, pd.DataFrame(player_data_defense, columns=defense_columns)], ignore_index=True)
 
     # Drop unnecessary columns from defense DataFrame
-    dfSouthernVirginiaDefense = dfSouthernVirginiaDefense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
-    dfSouthernVirginiaOffense = dfSouthernVirginiaOffense.drop(["ViewBio"], axis=1)
+    dfRandolphMaconDefense = dfRandolphMaconDefense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
+    dfRandolphMaconOffense = dfRandolphMaconOffense.drop(["ViewBio"], axis=1)
 
     # Combine both DataFrames horizontally (next to each other)
-    dfSouthernVirginiaCombinedStats = pd.concat([dfSouthernVirginiaOffense, dfSouthernVirginiaDefense], axis=1)
+    dfRandolphMaconCombinedStats = pd.concat([dfRandolphMaconOffense, dfRandolphMaconDefense], axis=1)
 
-    # Set the index to 'SouthernVirginia' for all rows
-    dfSouthernVirginiaCombinedStats['Team'] = 'SouthernVirginia'
-    dfSouthernVirginiaCombinedStats.set_index('Team', inplace=True)
+    # Set the index to 'RandolphMacon' for all rows
+    dfRandolphMaconCombinedStats['Team'] = 'RandolphMacon'
+    dfRandolphMaconCombinedStats.set_index('Team', inplace=True)
 
-    dfSouthernVirginiaCombinedStats.to_csv('SouthernVirginiaCombinedStats.csv', header=False)
+    dfRandolphMaconCombinedStats.to_csv('RandolphMaconCombinedStats.csv', header=False)
 
-    return dfSouthernVirginiaCombinedStats
-
-scrapeTeamStats_SouthernVirginia('https://knightathletics.com/sports/mens-volleyball/stats')
+    return dfRandolphMaconCombinedStats
+scrapeTeamStats_RandolphMacon('https://rmcathletics.com/sports/mens-volleyball/stats/2023')
