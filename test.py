@@ -1,88 +1,86 @@
+import time
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import pandas as pd
-import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
+def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensive_selector):
+    with webdriver.Chrome() as driver:
+        driver.get(url)
 
+        # Use an explicit wait for a specific element to be present on the page
+        element_present = EC.presence_of_element_located((By.CSS_SELECTOR, offensive_selector))
+        WebDriverWait(driver, 20).until(element_present)
 
-def scrapeTeamStats_Nazareth(url):
-    driver = webdriver.Chrome()
-    driver.get(url)
-    time.sleep(5)
+        page_source = driver.page_source
 
-    page_source = driver.page_source
-    driver.quit()
     soup = BeautifulSoup(page_source, 'html.parser')
+    all_player_rows = soup.select(f'{offensive_selector} tbody tr.odd, {offensive_selector} tbody tr.even, {defensive_selector} tbody tr.odd, {defensive_selector} tbody tr.even')
 
-    # Find all rows with class 'odd' or 'even' within both the offensive and defensive sections
-    all_player_rows = soup.select('section#individual-overall-offensive table.sidearm-table tbody tr.odd, section#individual-overall-offensive table.sidearm-table tbody tr.even, section#individual-overall-defensive table.sidearm-table tbody tr.odd, section#individual-overall-defensive table.sidearm-table tbody tr.even')
+    player_data_offense_list = []
+    player_data_defense_list = []
 
-    # Initialize empty lists to store player data for offense and defense
-    player_data_offense = []
-    player_data_defense = []
-
-    # Iterate through player rows and extract information for offense and defense
     for row in all_player_rows:
-        # Extract the player's name
         full_name = row.select_one('td:nth-of-type(2)').text.strip().split('\n')[0]
-
-        # Check if the full name is in the expected format
         if ', ' in full_name:
             first_name, last_name = full_name.split(', ')
             name = f'{first_name} {last_name}'
         else:
-            # Handle the case where the full name is not in the expected format
             name = full_name
 
-        # Determine whether the row belongs to offense or defense
+        jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
+
         if any('offensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
-            # This is an offense row
-            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
-            # Extract other columns for offense
-
-            # Combine the data into a single list for offense
-            player_info_offense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
-            player_data_offense.append(player_info_offense)
-
+            player_data_offense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_offense_list.append(player_data_offense)
         elif any('defensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
-            # This is a defense row
-            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
-            # Extract other columns for defense
+            player_data_defense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_defense_list.append(player_data_defense)
 
-            # Combine the data into a single list for defense
-            player_info_defense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
-            player_data_defense.append(player_info_defense)
-
-    # Create separate DataFrames for offense and defense with specified columns
     offense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Matches Played', 'Matches Started',
-                    'Points', 'Points/Set', 'Kills', 'Kills/Set', 'Errors', 'Total Attempts',
-                    'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces',
-                    'Services Aces/Set', 'Service Errors', 'ViewBio']
+                        'Points', 'Points/Set', 'Kills', 'Kills/Set', 'Errors', 'Total Attempts',
+                        'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces',
+                        'Services Aces/Set', 'Service Errors', 'ViewBio']
     defense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Digs', 'Digs/Set', 'Reception Error',
-                    'Total Reception Attempts', 'Reception Percentage', 'Reception Errors/Set',
-                    'Solo Blocks', 'Block Assist', 'Block Points', 'Blocks/Set', 'Block Errors',
-                    'BHE', 'ViewBio']
+                        'Total Reception Attempts', 'Reception Percentage', 'Reception Errors/Set',
+                        'Solo Blocks', 'Block Assist', 'Block Points', 'Blocks/Set', 'Block Errors',
+                        'BHE', 'ViewBio']
 
-    # Initialize empty DataFrames with specified columns
-    dfNazarethOffense = pd.DataFrame(columns=offense_columns)
-    dfNazarethDefense = pd.DataFrame(columns=defense_columns)
+    df_offense = pd.DataFrame(player_data_offense_list, columns=offense_columns)
+    df_defense = pd.DataFrame(player_data_defense_list, columns=defense_columns)
 
-    # Populate DataFrames with player data for offense and defense
-    dfNazarethOffense = pd.concat([dfNazarethOffense, pd.DataFrame(player_data_offense, columns=offense_columns)], ignore_index=True)
-    dfNazarethDefense = pd.concat([dfNazarethDefense, pd.DataFrame(player_data_defense, columns=defense_columns)], ignore_index=True)
+    # Drop unnecessary columns
+    df_offense = df_offense.drop(["ViewBio"], axis=1)
+    df_defense = df_defense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
 
-    # Drop unnecessary columns from defense DataFrame
-    dfNazarethDefense = dfNazarethDefense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
-    dfNazarethOffense = dfNazarethOffense.drop(["ViewBio"], axis=1)
+    df_combined_stats = pd.concat([df_offense, df_defense], axis=1)
+    df_combined_stats['Team'] = team_name
+    df_combined_stats.set_index('Team', inplace=True)
 
-    # Combine both DataFrames horizontally (next to each other)
-    dfNazarethCombinedStats = pd.concat([dfNazarethOffense, dfNazarethDefense], axis=1)
+    df_combined_stats.to_csv(output_filename, header=False)
 
-    # Set the index to 'Nazareth' for all rows
-    dfNazarethCombinedStats['Team'] = 'Nazareth'
-    dfNazarethCombinedStats.set_index('Team', inplace=True)
+    return df_combined_stats
 
-    dfNazarethCombinedStats.to_csv('NazarethCombinedStats.csv', header=False)
+# Create a list of team DataFrames
+team_dfs = [
+    scrapeTeamStats('https://rutgersnewarkathletics.com/sports/mens-volleyball/stats', 'Rutgers Newark', 'RutgersNewarkCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://knightathletics.com/sports/mens-volleyball/stats', 'Southern Virginia', 'SouthernVirginiaCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://keanathletics.com/sports/mens-volleyball/stats/2023', 'Kean', 'KeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://gonyuathletics.com/sports/mens-volleyball/stats/2023', 'NYU', 'NYUCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://rutgersnewarkathletics.com/sports/mens-volleyball/stats', 'Rutgers Newark', 'RutgersNewarkCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://knightathletics.com/sports/mens-volleyball/stats', 'Southern Virginia', 'SouthernVirginiaCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://keanathletics.com/sports/mens-volleyball/stats/2023', 'Kean', 'KeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #Change to 2024 when new season starts
+    scrapeTeamStats('https://marymountsaints.com/sports/mens-volleyball/stats', 'Marymount', 'MarymountCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table') ,
+    scrapeTeamStats('https://rmcathletics.com/sports/mens-volleyball/stats/2023', 'Randolph Macon', 'RandolphMaconCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table') ,#change to 2024 when new season starts
+    scrapeTeamStats('https://roanokemaroons.com/sports/mens-volleyball/stats', 'Roanoke', 'RoanokeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), 
+    scrapeTeamStats('https://etownbluejays.com/sports/mens-volleyball/stats/2023#individual', 'Elizabethtown', 'ElizabethtownCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
+    scrapeTeamStats('https://mitathletics.com/sports/mens-volleyball/stats/2022', 'MIT', 'MITCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
+    scrapeTeamStats('https://nazathletics.com/sports/mens-volleyball/stats/2023#individual', 'Nazareth', 'NazarethCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
+    scrapeTeamStats('https://gonyuathletics.com/sports/mens-volleyball/stats/2023', 'NYU', 'NYUCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
+    scrapeTeamStats('https://stjohnfisher.com/sports/mens-volleyball/stats/2023', 'St John Fisher', 'StJohnFisherCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table')] #change
 
-    return dfNazarethCombinedStats
-scrapeTeamStats_Nazareth('https://nazathletics.com/sports/mens-volleyball/stats/2023#individual')  #change
+# Concatenate the list of team DataFrames
+dfTOTALSTATS = pd.concat(team_dfs, ignore_index=True)
+dfTOTALSTATS.to_csv('CombinedStats.csv', index=False)
