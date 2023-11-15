@@ -55,16 +55,29 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
     df_offense = df_offense.drop(["ViewBio"], axis=1)
     df_defense = df_defense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
 
+    # Concatenate the DataFrames
     df_combined_stats = pd.concat([df_offense, df_defense], axis=1)
+
+    # Add 'Team' column
     df_combined_stats['Team'] = team_name
+
+    # Set the index on the new DataFrame
     df_combined_stats.set_index('Team', inplace=True)
 
+    # Save to CSV
     df_combined_stats.to_csv(output_filename, header=False)
 
     return df_combined_stats
 
 # Create a list of team DataFrames
+
+#NEED TO CHANGE ALL URLS WITH 2023 TO 2024!!!!
+
 team_dfs = [
+
+    #7 minutes to do 26 teams, should take about 30 minutes to run every team hopefully.
+
+    #CVC
     scrapeTeamStats('https://rutgersnewarkathletics.com/sports/mens-volleyball/stats', 'Rutgers Newark', 'RutgersNewarkCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://knightathletics.com/sports/mens-volleyball/stats', 'Southern Virginia', 'SouthernVirginiaCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://keanathletics.com/sports/mens-volleyball/stats/2023', 'Kean', 'KeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
@@ -76,11 +89,29 @@ team_dfs = [
     scrapeTeamStats('https://rmcathletics.com/sports/mens-volleyball/stats/2023', 'Randolph Macon', 'RandolphMaconCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table') ,#change to 2024 when new season starts
     scrapeTeamStats('https://roanokemaroons.com/sports/mens-volleyball/stats', 'Roanoke', 'RoanokeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), 
     scrapeTeamStats('https://etownbluejays.com/sports/mens-volleyball/stats/2023#individual', 'Elizabethtown', 'ElizabethtownCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
+
+    #UVC
     scrapeTeamStats('https://mitathletics.com/sports/mens-volleyball/stats/2022', 'MIT', 'MITCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
     scrapeTeamStats('https://nazathletics.com/sports/mens-volleyball/stats/2023#individual', 'Nazareth', 'NazarethCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
     scrapeTeamStats('https://gonyuathletics.com/sports/mens-volleyball/stats/2023', 'NYU', 'NYUCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
-    scrapeTeamStats('https://stjohnfisher.com/sports/mens-volleyball/stats/2023', 'St John Fisher', 'StJohnFisherCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table')] #change
+    #not working: scrapeTeamStats('https://stjohnfisher.com/sports/mens-volleyball/stats/2023', 'St John Fisher', 'StJohnFisherCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table')] #change
+    scrapeTeamStats('https://nphawks.com/sports/mens-volleyball/stats', 'NewPaltz', 'NewPaltzCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://www.vassarathletics.com/sports/mens-volleyball/stats/2023', 'Vassar', 'VassarCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://athletics.elmira.edu/sports/mens-volleyball/stats/2023', 'Elmira', 'ElmiraCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    
+    #MAC
+    scrapeTeamStats('https://arcadiaknights.com/sports/mens-volleyball/stats/2023', 'Arcadia', 'ArcadiaCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://goeasterneagles.com/sports/mens-volleyball/stats', 'Eastern', 'EasternCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://hoodathletics.com/sports/mens-volleyball/stats', 'Hood', 'HoodCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table' ),
+    scrapeTeamStats('https://kingscollegeathletics.com/sports/mens-volleyball/stats', 'Kings', 'KingsCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table' ),
+    scrapeTeamStats('https://gomessiah.com/sports/mens-volleyball/stats', 'Messiah', 'MessiahCombineStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://athletics.misericordia.edu/sports/mens-volleyball/stats/2022', 'Misericordia', 'MisericordiaCombinedStats.csv','section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://stevensducks.com/sports/mens-volleyball/stats/2022', 'Stevens', 'StevensCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://gomustangsports.com/sports/mens-volleyball/stats', 'Stevenson', 'StevensonCombinedStats.csv','section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://widenerpride.com/sports/mens-volleyball/stats/2023', 'Widener', 'WidenerCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://gowilkesu.com/sports/mens-volleyball/stats/2023', 'Wilkes', 'WilkesCombinedStats.csv',  'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table')]
 
-# Concatenate the list of team DataFrames
+
+#Concatenate the list of team DataFrames
 dfTOTALSTATS = pd.concat(team_dfs, ignore_index=True)
 dfTOTALSTATS.to_csv('CombinedStats.csv', index=False)
