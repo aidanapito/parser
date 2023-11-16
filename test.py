@@ -32,13 +32,13 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
         jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
 
         if any('offensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
-            player_data_offense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+            player_data_offense = [team_name, name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
             player_data_offense_list.append(player_data_offense)
         elif any('defensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
             player_data_defense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
             player_data_defense_list.append(player_data_defense)
 
-    offense_columns = ['Name', 'Jersey Number', 'Sets Played', 'Matches Played', 'Matches Started',
+    offense_columns = ['Team', 'Name', 'Jersey Number', 'Sets Played', 'Matches Played', 'Matches Started',
                         'Points', 'Points/Set', 'Kills', 'Kills/Set', 'Errors', 'Total Attempts',
                         'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces',
                         'Services Aces/Set', 'Service Errors', 'ViewBio']
@@ -54,14 +54,18 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
     df_offense = df_offense.drop(["ViewBio"], axis=1)
     df_defense = df_defense.drop(["ViewBio", "Name", "Jersey Number", "Sets Played"], axis=1)
 
+    df_offense['Team'] = team_name
+
     # Concatenate the DataFrames
     df_combined_stats = pd.concat([df_offense, df_defense], axis=1)
+
+    #debug statement
+    df_combined_stats.to_csv('CombinedStatsTest.csv', header=False)
 
     return df_combined_stats
 
 
 # Create a list of team DataFrames
-
 #NEED TO CHANGE ALL URLS WITH 2023 TO 2024!!!!
 
 team_dfs = [
@@ -102,18 +106,8 @@ team_dfs = [
     scrapeTeamStats('https://widenerpride.com/sports/mens-volleyball/stats/2023', 'Widener', 'WidenerCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://gowilkesu.com/sports/mens-volleyball/stats/2023', 'Wilkes', 'WilkesCombinedStats.csv',  'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table')]
 
-
 # Concatenate the list of team DataFrames
-dfTOTALSTATS = pd.concat(team_dfs, ignore_index=True)
-
-# Add 'Team' column
-dfTOTALSTATS['Team'] = dfTOTALSTATS['TEAM']
-
-# Drop the redundant 'TEAM' column
-dfTOTALSTATS = dfTOTALSTATS.drop(['TEAM'], axis=1)
-
-# Reset the index
-dfTOTALSTATS = dfTOTALSTATS.reset_index(drop=True)
+df_combined_stats = pd.concat(team_dfs, ignore_index=True)
 
 # Write the DataFrame to a CSV file with the 'Team' column and without including the index
-dfTOTALSTATS.to_csv('CombinedStats.csv', index=False)
+df_combined_stats.to_csv('CombinedStats.csv', index=False, ignore_index=True)
