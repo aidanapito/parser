@@ -1,4 +1,3 @@
-import time
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -58,16 +57,8 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
     # Concatenate the DataFrames
     df_combined_stats = pd.concat([df_offense, df_defense], axis=1)
 
-    # Add 'Team' column
-    df_combined_stats['Team'] = team_name
-
-    # Set the index on the new DataFrame
-    df_combined_stats.set_index('Team', inplace=True)
-
-    # Save to CSV
-    df_combined_stats.to_csv(output_filename, header=False)
-
     return df_combined_stats
+
 
 # Create a list of team DataFrames
 
@@ -94,7 +85,7 @@ team_dfs = [
     scrapeTeamStats('https://mitathletics.com/sports/mens-volleyball/stats/2022', 'MIT', 'MITCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
     scrapeTeamStats('https://nazathletics.com/sports/mens-volleyball/stats/2023#individual', 'Nazareth', 'NazarethCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
     scrapeTeamStats('https://gonyuathletics.com/sports/mens-volleyball/stats/2023', 'NYU', 'NYUCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
-    #not working: scrapeTeamStats('https://stjohnfisher.com/sports/mens-volleyball/stats/2023', 'St John Fisher', 'StJohnFisherCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table')] #change
+    #not working: scrapeTeamStats('https://stjohnfisher.com/sports/mens-volleyball/stats/2023', 'St John Fisher', 'StJohnFisherCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), change
     scrapeTeamStats('https://nphawks.com/sports/mens-volleyball/stats', 'NewPaltz', 'NewPaltzCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://www.vassarathletics.com/sports/mens-volleyball/stats/2023', 'Vassar', 'VassarCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://athletics.elmira.edu/sports/mens-volleyball/stats/2023', 'Elmira', 'ElmiraCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
@@ -112,6 +103,17 @@ team_dfs = [
     scrapeTeamStats('https://gowilkesu.com/sports/mens-volleyball/stats/2023', 'Wilkes', 'WilkesCombinedStats.csv',  'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table')]
 
 
-#Concatenate the list of team DataFrames
+# Concatenate the list of team DataFrames
 dfTOTALSTATS = pd.concat(team_dfs, ignore_index=True)
+
+# Add 'Team' column
+dfTOTALSTATS['Team'] = dfTOTALSTATS['TEAM']
+
+# Drop the redundant 'TEAM' column
+dfTOTALSTATS = dfTOTALSTATS.drop(['TEAM'], axis=1)
+
+# Reset the index
+dfTOTALSTATS = dfTOTALSTATS.reset_index(drop=True)
+
+# Write the DataFrame to a CSV file with the 'Team' column and without including the index
 dfTOTALSTATS.to_csv('CombinedStats.csv', index=False)
