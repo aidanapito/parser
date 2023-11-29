@@ -5,10 +5,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
-# Set display options
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-
 def fetch_html_with_selenium(url):
     driver = webdriver.Chrome()
     driver.get(url)

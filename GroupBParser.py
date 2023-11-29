@@ -25,7 +25,7 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
         full_name = row.select_one('td:nth-of-type(2)').text.strip().split('\n')[0]
         if ', ' in full_name:
             first_name, last_name = full_name.split(', ')
-            name = f'{first_name.strip()} {last_name.strip()}'
+            name = f'{last_name.strip()} {first_name.strip()}'
         else:
             name = full_name.strip()
 
@@ -74,7 +74,7 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://keanathletics.com/sports/mens-volleyball/stats/2023', 'Kean', 'KeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://marymountsaints.com/sports/mens-volleyball/stats', 'Marymount', 'MarymountCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table') ,
     scrapeTeamStats('https://rmcathletics.com/sports/mens-volleyball/stats/2023', 'Randolph Macon', 'RandolphMaconCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table') ,#change to 2024 when new season starts
-    scrapeTeamStats('https://roanokemaroons.com/sports/mens-volleyball/stats', 'Roanoke', 'RoanokeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-primary', 'section#individual-overall-defensive table.sidearm-primary'), 
+    scrapeTeamStats('https://roanokemaroons.com/sports/mens-volleyball/stats', 'Roanoke', 'RoanokeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), 
     scrapeTeamStats('https://etownbluejays.com/sports/mens-volleyball/stats/2023#individual', 'Elizabethtown', 'ElizabethtownCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
     scrapeTeamStats('https://emuroyals.com/sports/mens-volleyball/stats/2023', 'Eastern Mennonite', 'EasternMennoniteCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #TEST IF NOT B
     scrapeTeamStats('https://gomightymacs.com/sports/mens-volleyball/stats', 'Immaculata', 'ImmaculataCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
@@ -111,7 +111,7 @@ team_dfs = [ #THESE ARE AL TYPE B
 
     #GNAC
     scrapeTeamStats('https://www.colby-sawyerathletics.com/sports/mens-volleyball/stats/2023', 'Colby Sawyer', 'ColbySawyerCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://deanbulldogs.com/sports/mens-volleyball/stats', 'Dean', 'DeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-primary', 'section#individual-overall-defensive table.sidearm-primary'),
+    scrapeTeamStats('https://deanbulldogs.com/sports/mens-volleyball/stats', 'Dean', 'DeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
 
     #AMCC
     scrapeTeamStats('https://athletics.geneva.edu/sports/mens-volleyball/stats/2023', 'Geneva', 'GenevaCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
@@ -148,8 +148,6 @@ team_dfs = [ #THESE ARE AL TYPE B
     #MCVL
     scrapeTeamStats('https://adrianbulldogs.com/sports/mens-volleyball/stats#individual', 'Adrian', 'AdrianCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://msjlions.com/sports/mens-volleyball/stats', 'Mount St Joseph', 'MountStJosephCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://athletics.mountunion.edu/sports/mens-volleyball/stats#individual', 'Mount Union', 'MountUnionCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://sports.wabash.edu/sports/mens-volleyball/stats/2023', 'Wabash', 'WabashCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
 
     #NEAC
     scrapeTeamStats('https://bardathletics.com/sports/mens-volleyball/stats/2023', 'Bard', 'BardCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
@@ -160,7 +158,7 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://athletics.aurora.edu/sports/mens-volleyball/stats', 'Aurora', 'AuroraCombinedStats.csv','section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://benueagles.com/sports/mens-volleyball/stats/2023#individual', 'Benedictine', 'BenedictineCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://www.cucougars.com/sports/mens-volleyball/stats/2023', 'Concordia Chicago', 'ConcordiaChicagoCombinedStats.csv','section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://dustars.com/sports/mens-volleyball/stats', 'Dominican', 'DominicanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-primary','section#individual-overall-defensive table.sidearm-primary'),
+    scrapeTeamStats('https://dustars.com/sports/mens-volleyball/stats', 'Dominican', 'DominicanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://edgewoodcollegeeagles.com/sports/mens-volleyball/stats', 'Edgewood', 'EdgewoodCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://sabreathletics.com/sports/mens-volleyball/stats', 'Marian', 'MarianCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://msoeraiders.com/sports/mens-volleyball/stats#individual', 'MSOE', 'MSOECombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
