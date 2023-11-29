@@ -15,7 +15,7 @@ subprocess.run(['python', 'GroupBParser.py'])
 subprocess.run(['python', 'GroupDParser.py'])
 
 # List of CSV files to combine
-csv_files = ['CombinedStatsGroupA.csv','CombinedStatsGroupAV2.csv', 'CombinedStatsGroupAV3.csv', 'CombinedStatsGroupB.csv', 'CombinedStatsGroupD.csv']
+csv_files = ['CombinedStatsGroupA.csv','CombinedStatsGroupAV2.csv', 'CombinedStatsGroupAV3.csv', 'CombinedStatsGroupB.csv','CombinedStatsGroupD.csv']
 
 # Initialize an empty DataFrame
 combined_df = pd.DataFrame()

@@ -10,8 +10,8 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
         driver.get(url)
 
         # Use an explicit wait for a specific element to be present on the page
-        element_present = EC.presence_of_element_located((By.CSS_SELECTOR, offensive_selector))
-        WebDriverWait(driver, 20).until(element_present)
+        offensive_element = (By.CSS_SELECTOR, offensive_selector)
+        WebDriverWait(driver, 15).until(EC.visibility_of_element_located(offensive_element))
 
         page_source = driver.page_source
 
@@ -69,27 +69,27 @@ team_dfs = [ #THESE ARE AL TYPE B
     #7 minutes to do 26 teams, should take about 30 minutes to run every team hopefully.
 
     #CVC
-    scrapeTeamStats('https://gomightymacs.com/sports/mens-volleyball/stats', 'Immaculata', 'ImmaculataCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://gomightymacs.com/sports/mens-volleyball/stats#individual', 'Immaculata', 'ImmaculataCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     #UVC
     
     #CUNY 
     #scrapeTeamStats('https://www.brooklyncollegeathletics.com/sports/mens-volleyball/stats/2023', 'Brooklyn College', 'BrooklynCollegeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
 
     #GNAC
-    scrapeTeamStats('https://deanbulldogs.com/sports/mens-volleyball/stats', 'Dean', 'DeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://deanbulldogs.com/sports/mens-volleyball/stats#individual', 'Dean', 'DeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
 
     #CSAC
-    scrapeTeamStats('https://uvfpatriots.com/sports/mvb/stats', 'Valley Forge', 'ValleyForgeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://uvfpatriots.com/sports/mvb/stats#individual', 'Valley Forge', 'ValleyForgeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
 
     #INDEPENDENTS
-    scrapeTeamStats('https://clusports.com/sports/mens-volleyball/stats', 'Cal Lutheran', 'CalLutheranCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://www.neumannathletics.com/sports/mens-volleyball/stats/2022', 'Neumann', 'NeumannCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://clusports.com/sports/mens-volleyball/stats/2023#individual', 'Cal Lutheran', 'CalLutheranCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://www.neumannathletics.com/sports/mens-volleyball/stats/2022#individual', 'Neumann', 'NeumannCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
    
     #MCVL
     scrapeTeamStats('https://adrianbulldogs.com/sports/mens-volleyball/stats#individual', 'Adrian', 'AdrianCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
 
     #NACC
-    scrapeTeamStats('https://dustars.com/sports/mens-volleyball/stats', 'Dominican', 'DominicanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://dustars.com/sports/mens-volleyball/stats#individual', 'Dominican', 'DominicanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
 
     ]
 
