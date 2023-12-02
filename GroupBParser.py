@@ -11,7 +11,7 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
 
         # Use an explicit wait for a specific element to be present on the page
         offensive_element = (By.CSS_SELECTOR, offensive_selector)
-        WebDriverWait(driver, 15).until(EC.visibility_of_element_located(offensive_element))
+        WebDriverWait(driver, 20).until(EC.visibility_of_element_located(offensive_element))
 
         page_source = driver.page_source
 
@@ -79,11 +79,11 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://emuroyals.com/sports/mens-volleyball/stats/2023#individual', 'Eastern Mennonite', 'EasternMennoniteCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #TEST IF NOT B
     scrapeTeamStats('https://gomightymacs.com/sports/mens-volleyball/stats#individual', 'Immaculata', 'ImmaculataCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     #UVC
-    scrapeTeamStats('https://mitathletics.com/sports/mens-volleyball/stats/2022#individual', 'MIT', 'MITCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
+    scrapeTeamStats('https://mitathletics.com/sports/mens-volleyball/stats/2023#individual', 'MIT', 'MITCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
     scrapeTeamStats('https://nazathletics.com/sports/mens-volleyball/stats/2023#individual', 'Nazareth', 'NazarethCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
     scrapeTeamStats('https://gonyuathletics.com/sports/mens-volleyball/stats/2023#individual', 'NYU', 'NYUCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'), #change
     scrapeTeamStats('https://sjfathletics.com/sports/mens-volleyball/stats/2023#individual', 'St John Fisher', 'StJohnFisherCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://nphawks.com/sports/mens-volleyball/stats#individual', 'NewPaltz', 'NewPaltzCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://nphawks.com/sports/mens-volleyball/stats#individual', 'SUNY New Paltz', 'NewPaltzCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://www.vassarathletics.com/sports/mens-volleyball/stats/2023#individual', 'Vassar', 'VassarCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://athletics.elmira.edu/sports/mens-volleyball/stats/2023#individual', 'Elmira', 'ElmiraCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     
@@ -129,6 +129,7 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://duhawks.com/sports/mens-volleyball/stats#individual', 'Loras', 'LorasCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://northcentralcardinals.com/sports/mens-volleyball/stats/2023#individual', 'North Central', 'NorthCentralCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://athletics.northpark.edu/sports/mens-volleyball/stats/2023#individual', 'North Park', 'NorthParkCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://sports.wabash.edu/sports/mens-volleyball/stats/2023#individual', 'Wabash', 'WabashCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
 
     #CSAC
     scrapeTeamStats('https://brynathynathletics.com/sports/mens-volleyball/stats#individual', 'Bryn Athyn', 'BrynathynCombinedStats.csv','section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),

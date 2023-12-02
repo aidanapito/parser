@@ -13,6 +13,7 @@ def fetch_html_with_selenium(url):
         # Wait for the specific div to be present
         element_present = EC.presence_of_element_located((By.CLASS_NAME, 'stats-box'))
         WebDriverWait(driver, 15).until(element_present)
+        
     except Exception as e:
         driver.quit()
         return None
@@ -79,28 +80,21 @@ if __name__ == "__main__":
     team_urls = [
         'https://www.wentworthathletics.com/sports/mvball/2022-23/teams/wentworth?view=lineup&r=0&pos=',
         'https://laserpride.lasell.edu/sports/mvball/2022-23/teams/lasell?view=lineup&r=0&pos=',
-        'https://www.psaltoonalions.com/sports/mvball/2022-23/teams/pennstaltoona?view=lineup&r=0&pos=',
         'https://www.psblions.com/sports/mvball/2022-23/teams/pennstbehrend?view=lineup&r=0&pos=',
-        'https://wells.prestosports.com/sports/mvball/2022-23/teams/wells?view=lineup&r=0&pos=',
         'https://www.juniatasports.net/sports/mvball/2022-23/teams/juniatacollege?view=lineup&r=0&pos=',
-        'https://athletics.elms.edu/sports/mvball/2022-23/teams/elms?view=lineup&r=0&pos=',
         'https://www.goregispride.com/sports/mvball/2022-23/teams/regismass?view=lineup&r=0&pos=',
-        'https://www.rivierathletics.com/sports/mvball/2022-23/teams/rivier?view=lineup&r=0&pos=',
-        'https://www.mbusabercats.com/sports/mvball/2022-23/teams/maranathabaptist?view=lineup&r=0&pos=',
-        'https://www.springfieldcollegepride.com/sports/mvball/2022-23/teams/springfield?view=lineup&r=0&pos=',
         'https://www.bwyellowjackets.com/sports/mvball/2022-23/teams/baldwinwallace?view=lineup&r=0&pos=',
         'https://wittenbergtigers.com/sports/mvball/2022-23/teams/wittenberg?view=lineup&r=0&pos=',
         'https://www.ecgulls.com/sports/mvball/2022-23/teams/endicott?view=lineup&r=0&pos=',
         'https://nvubadgers.com/sports/mvball/2022-23/teams/northernvermontjohnson?view=lineup&r=0&pos=',
         'https://www.sagegators.com/sports/mvball/2022-23/teams/sage?view=lineup&r=0&pos=',
         'https://wildcats.sunypoly.edu/sports/mvball/2022-23/teams/sunypoly?view=lineup&r=0&pos=',
-        'https://www.cuwfalcons.com/sports/mvball/2022-23/teams/concordiawisconsin?view=lineup&r=0&pos=',
         #SJBRKLYN
         #EMERSON AND ILLINOIS TECH JUST NOT UP
     ]
 
     # Define manual team names corresponding to the URLs 
-    team_names = ['Wentworth', 'Lasell', 'Penn St Altoona', 'Penn St Behrend', 'Wells', 'Juniata', 'Elms' , 'Regis', 'Rivier', 'Maranatha Baptist', 'Springfield', 'Baldwin Wallace', 'Wittenberg', 'Endicott', 'NVU Johnson', 'Sage', 'Suny Poly',  'Concordia Wisconsin']
+    team_names = ['Wentworth', 'Lasell', 'Penn St Behrend','Juniata', 'Regis','Baldwin Wallace', 'Wittenberg', 'Endicott', 'NVU Johnson', 'Sage', 'Suny Poly']
 
     # Parse and concatenate data for multiple teams
     result_df = parse_and_concat_teams(team_urls, team_names)

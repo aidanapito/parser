@@ -64,37 +64,13 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
 # Create a list of team DataFrames
 #NEED TO CHANGE ALL URLS WITH 2023 TO 2024!!!!
 
-team_dfs = [ #THESE ARE AL TYPE B 
+team_dfs = [ #THESE ARE AL TYPE BV2
 
-    #7 minutes to do 26 teams, should take about 30 minutes to run every team hopefully.
-
-    #CVC
-    scrapeTeamStats('https://gomightymacs.com/sports/mens-volleyball/stats#individual', 'Immaculata', 'ImmaculataCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-    #UVC
-    
-    #CUNY 
-    #scrapeTeamStats('https://www.brooklyncollegeathletics.com/sports/mens-volleyball/stats/2023', 'Brooklyn College', 'BrooklynCollegeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-
-    #GNAC
-    scrapeTeamStats('https://deanbulldogs.com/sports/mens-volleyball/stats#individual', 'Dean', 'DeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-
-    #CSAC
-    scrapeTeamStats('https://uvfpatriots.com/sports/mvb/stats#individual', 'Valley Forge', 'ValleyForgeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-
-    #INDEPENDENTS
-    scrapeTeamStats('https://clusports.com/sports/mens-volleyball/stats/2023#individual', 'Cal Lutheran', 'CalLutheranCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://www.neumannathletics.com/sports/mens-volleyball/stats/2022#individual', 'Neumann', 'NeumannCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-   
-    #MCVL
-    scrapeTeamStats('https://adrianbulldogs.com/sports/mens-volleyball/stats#individual', 'Adrian', 'AdrianCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-
-    #NACC
-    scrapeTeamStats('https://dustars.com/sports/mens-volleyball/stats#individual', 'Dominican', 'DominicanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-
+    scrapeTeamStats('https://athletics.mountunion.edu/sports/mens-volleyball/stats#individual', 'Mount Union', 'MountUnionCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     ]
 
 # Concatenate the list of team DataFrames
 df_combined_stats = pd.concat(team_dfs, ignore_index=True)
 
 # Write the DataFrame to a CSV file with the 'Team' column and without including the index
-df_combined_stats.to_csv('CombinedStatsGroupBTest.csv', index=False)
+df_combined_stats.to_csv('CombinedStatsGroupBV2.csv', index=False)
