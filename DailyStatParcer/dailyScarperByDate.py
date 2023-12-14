@@ -136,7 +136,7 @@ if __name__ == "__main__":
                 all_games_combined_df = pd.concat(all_game_dfs, keys=range(1, len(all_game_dfs) + 1))
 
                 # Save combined DataFrame to a CSV file
-                csv_filename = f"{current_date}_stats.csv"
+                csv_filename = f"daily_stats_{current_date}.csv"
                 all_games_combined_df.to_csv(csv_filename, index=False)
 
                 print(f"Combined dataframe saved to {csv_filename}.")
@@ -144,3 +144,5 @@ if __name__ == "__main__":
                 print("No valid games found.")
     else:
         print("No games today or unable to fetch HTML content.")
+
+#add player teams
