@@ -79,7 +79,7 @@ def parse_and_concat_teams(team_urls, team_names):
 if __name__ == "__main__":
     # Define URLs for multiple teams
     team_urls = [
-        'https://www.trinethunder.com/sports/mvball/2022-23/teams/trine?view=lineup&r=0&pos=', 
+        'https://www.trinethunder.com/sports/mvball/2023-24/teams/trine?view=lineup&r=0&pos=', 
         ]
     
 

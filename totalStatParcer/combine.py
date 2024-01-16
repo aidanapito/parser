@@ -15,6 +15,7 @@ subprocess.run(['python', 'GroupBParser.py'])
 subprocess.run(['python', 'GroupBV2Parser.py'])
 subprocess.run(['python', 'GroupDParser.py'])
 
+
 # List of CSV files to combine
 csv_files = ['CombinedStatsGroupA.csv','CombinedStatsGroupAV2.csv', 'CombinedStatsGroupAV3.csv', 'CombinedStatsGroupB.csv', 'CombinedStatsGroupBV2.csv', 'CombinedStatsGroupD.csv']
 
@@ -34,12 +35,14 @@ for i, file in enumerate(csv_files):
 # Save the combined data to a new CSV file
 combined_df = combined_df.sort_values('Team')
 
-combined_df.to_csv('NCAAD3StatsMaster.csv', index=False)
+combined_df.to_csv('NCAAD3StatsMaster2024.csv', index=False)
+
+
+subprocess.run(['python', 'DailyScraperByDate.py'])
+subprocess.run(['python', 'DailyGameScores2024.py'])
 
 endTime = time.time()
 totalTime = endTime - startTime
 
 totalTime = totalTime / 60
 print(f"Time: {totalTime} minutes")
-
-#looking for 1747 individuals

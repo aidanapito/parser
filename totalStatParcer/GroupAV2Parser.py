@@ -84,15 +84,15 @@ def parse_and_concat_teams(team_urls, team_names):
 if __name__ == "__main__":
     # Define URLs for multiple teams
     team_urls = [
-        'https://sjclongisland.prestosports.com/sports/mvball/2022-23/teams/stjosephsli?sort=sa&view=lineup&pos=p&r=0',
-        'https://sjbkathletics.com/sports/mvball/2022-23/teams/stjosephsbrkln?view=lineup&r=0&pos=',
-        'https://wells.prestosports.com/sports/mvball/2022-23/teams/wells?view=lineup&r=0&pos=',
-        'https://www.rivierathletics.com/sports/mvball/2022-23/teams/rivier?view=lineup&r=0&pos=',
-        'https://www.mbusabercats.com/sports/mvball/2022-23/teams/maranathabaptist?view=lineup&r=0&pos=',
-        'https://www.psaltoonalions.com/sports/mvball/2022-23/teams/pennstaltoona?view=lineup&r=0&pos=',
-        'https://www.cuwfalcons.com/sports/mvball/2022-23/teams/concordiawisconsin?view=lineup&r=0&pos=',
-        'https://www.springfieldcollegepride.com/sports/mvball/2022-23/teams/springfield?view=lineup&r=0&pos=',
-        'https://athletics.elms.edu/sports/mvball/2022-23/teams/elms?view=lineup&r=0&pos=',
+        'https://sjclongisland.prestosports.com/sports/mvball/2023-24/teams/stjosephsli?sort=sa&view=lineup&pos=p&r=0',
+        'https://sjbkathletics.com/sports/mvball/2023-24/teams/stjosephsbrkln?view=lineup&r=0&pos=',
+        'https://wells.prestosports.com/sports/mvball/2023-24/teams/wells?view=lineup&r=0&pos=',
+        'https://www.rivierathletics.com/sports/mvball/2023-24/teams/rivier?view=lineup&r=0&pos=',
+        'https://www.mbusabercats.com/sports/mvball/2023-24/teams/maranathabaptist?view=lineup&r=0&pos=',
+        'https://www.psaltoonalions.com/sports/mvball/2023-24/teams/pennstaltoona?view=lineup&r=0&pos=',
+        'https://www.cuwfalcons.com/sports/mvball/2023-24/teams/concordiawisconsin?view=lineup&r=0&pos=',
+        'https://www.springfieldcollegepride.com/sports/mvball/2023-24/teams/springfield?view=lineup&r=0&pos=',
+        'https://athletics.elms.edu/sports/mvball/2023-24/teams/elms?view=lineup&r=0&pos=',
         ]
     
 

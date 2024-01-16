@@ -78,17 +78,17 @@ def parse_and_concat_teams(team_urls, team_names):
 if __name__ == "__main__":
     # Define URLs for multiple teams
     team_urls = [
-        'https://www.wentworthathletics.com/sports/mvball/2022-23/teams/wentworth?view=lineup&r=0&pos=',
-        'https://laserpride.lasell.edu/sports/mvball/2022-23/teams/lasell?view=lineup&r=0&pos=',
-        'https://www.psblions.com/sports/mvball/2022-23/teams/pennstbehrend?view=lineup&r=0&pos=',
-        'https://www.juniatasports.net/sports/mvball/2022-23/teams/juniatacollege?view=lineup&r=0&pos=',
-        'https://www.goregispride.com/sports/mvball/2022-23/teams/regismass?view=lineup&r=0&pos=',
-        'https://www.bwyellowjackets.com/sports/mvball/2022-23/teams/baldwinwallace?view=lineup&r=0&pos=',
-        'https://wittenbergtigers.com/sports/mvball/2022-23/teams/wittenberg?view=lineup&r=0&pos=',
-        'https://www.ecgulls.com/sports/mvball/2022-23/teams/endicott?view=lineup&r=0&pos=',
-        'https://nvubadgers.com/sports/mvball/2022-23/teams/northernvermontjohnson?view=lineup&r=0&pos=',
-        'https://www.sagegators.com/sports/mvball/2022-23/teams/sage?view=lineup&r=0&pos=',
-        'https://wildcats.sunypoly.edu/sports/mvball/2022-23/teams/sunypoly?view=lineup&r=0&pos=',
+        'https://www.wentworthathletics.com/sports/mvball/2023-24/teams/wentworth?view=lineup&r=0&pos=',
+        'https://laserpride.lasell.edu/sports/mvball/2023-24/teams/lasell?view=lineup&r=0&pos=',
+        'https://www.psblions.com/sports/mvball/2023-24/teams/pennstbehrend?view=lineup&r=0&pos=',
+        'https://www.juniatasports.net/sports/mvball/2023-24/teams/juniatacollege?view=lineup&r=0&pos=',
+        'https://www.goregispride.com/sports/mvball/2023-24/teams/regismass?view=lineup&r=0&pos=',
+        'https://www.bwyellowjackets.com/sports/mvball/2023-24/teams/baldwinwallace?view=lineup&r=0&pos=',
+        'https://wittenbergtigers.com/sports/mvball/2023-24/teams/wittenberg?view=lineup&r=0&pos=',
+        'https://www.ecgulls.com/sports/mvball/2023-24/teams/endicott?view=lineup&r=0&pos=',
+        'https://nvubadgers.com/sports/mvball/2023-24/teams/northernvermontjohnson?view=lineup&r=0&pos=',
+        'https://www.sagegators.com/sports/mvball/2023-24/teams/sage?view=lineup&r=0&pos=',
+        'https://wildcats.sunypoly.edu/sports/mvball/2023-24/teams/sunypoly?view=lineup&r=0&pos=',
         #SJBRKLYN
         #EMERSON AND ILLINOIS TECH JUST NOT UP
     ]

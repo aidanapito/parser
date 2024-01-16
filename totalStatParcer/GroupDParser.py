@@ -118,10 +118,10 @@ def extract_tables(team_urls, team_names, output_csv='CombinedStatsGroupD.csv'):
 if __name__ == "__main__":
     # Define URLs for multiple teams
     team_urls = [
-        'https://www.olivetcomets.com/sports/mvball/2022-23/teams/olivet?view=lineup&r=0&pos=', 
-        'https://www.fontbonnegriffins.com/sports/mvball/2022-23/teams/fontbonne?view=lineup&r=0&pos=',
-        'https://www.goecsaints.com/sports/m-volley/2022-23/teams/emmanuelmass?view=lineup&r=0&pos=',
-        'https://athletics.enc.edu/sports/mvball/2022-23/teams/easternnazarene?view=lineup&r=0&pos='
+        'https://www.olivetcomets.com/sports/mvball/2023-24/teams/olivet?view=lineup&r=0&pos=', 
+        'https://www.fontbonnegriffins.com/sports/mvball/2023-24/teams/fontbonne?view=lineup&r=0&pos=',
+        'https://www.goecsaints.com/sports/m-volley/2023-24/teams/emmanuelmass?view=lineup&r=0&pos=',
+        'https://athletics.enc.edu/sports/mvball/2023-24/teams/easternnazarene?view=lineup&r=0&pos='
     ]
 
     # Define manual team names corresponding to the URLs 

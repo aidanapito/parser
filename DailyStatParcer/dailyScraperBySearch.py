@@ -82,9 +82,9 @@ if __name__ == "__main__":
     chrome_options.add_argument('--ignore-certificate-errors')
     
     #change to whatever date to search
-    year = 2023
+    year = 2024
     month = 1
-    day = 13   
+    day = 10
     
     url = create_url(year, month, day)
     html = fetch_content(url)
