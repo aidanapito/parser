@@ -63,13 +63,20 @@ def parse_html_for_scores(html):
         num_sets = len(linescore_cell_text) // 2  # Assuming each set has two scores (team1 and team2)
 
         # Manually assign headers
-        headers = ['Team', 'Home/Away'] + [f'Score Set {i}' for i in range(1, num_sets + 1)] + ['Final Score']
+        headers = ['Team', 'Home/Away'] + [f'Score Set {i}' for i in range(1, num_sets + 1)] + ['Final Score', 'Stats Availability']
 
         # Create a list to hold the data for each team
         data = [
             [teams[0], home_away_info[0], ''] + linescore_cell_text[:num_sets],
             [teams[1], home_away_info[1], ''] + linescore_cell_text[num_sets:]
         ]
+
+        # Check if stats are available
+        stats_available = not all(elem == '' for elem in linescore_cell_text)
+
+        # Add stats availability information to the data
+        data[0].append(stats_available)
+        data[1].append(stats_available)
 
         # Create DataFrames for each team
         df_team1 = pd.DataFrame([data[0]], columns=headers)
@@ -82,7 +89,7 @@ def parse_html_for_scores(html):
 
         return result_df
 
-    print("Error: linescore-teams container not found.")
+    print("Stats not available or game not played.")
     return pd.DataFrame()
 
 if __name__ == "__main__":
@@ -91,7 +98,7 @@ if __name__ == "__main__":
     
     year = 2024
     month = 1
-    day = 10
+    day = 29
 
     url = create_url(year, month, day)
     html = fetch_content(url)
@@ -113,6 +120,8 @@ if __name__ == "__main__":
                     
                     if not df.empty:
                         all_game_data.append(df)
+                    else:
+                        print("No stats available or game not played for this link.")
 
                 except Exception as e:
                     print(f"Error processing game: {e}")
@@ -126,7 +135,7 @@ if __name__ == "__main__":
             # Save the result DataFrame to a CSV file without index and header
             csv_filename = f"DailyGameScores2024.csv"
             result_df.to_csv(csv_filename, index=False)
-            print (result_df)
+            print(result_df)
 
             print(f"Combined set scores saved to {csv_filename}.")
         else:

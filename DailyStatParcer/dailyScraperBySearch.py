@@ -17,7 +17,6 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
 }
 
-
 def create_url(year, month, day):
     return f"https://www.ncaa.com/scoreboard/volleyball-men/d3/{year:04d}/{month:02d}/{day:02d}/all-conf"
 
@@ -76,6 +75,16 @@ def html_to_dataframe(html, headers, team_name):
         print("Error: Unable to create dataframe from HTML.")
         return pd.DataFrame()  # Return an empty DataFrame if parsing fails
 
+def parse_html_for_teams(html):
+    soup = BeautifulSoup(html, 'html.parser')
+
+    teams = []
+    for team_container in soup.find_all('div', {'class': 'gamecenter-game-banner-team'}):
+        team_name_long = team_container.find('span', {'class': 'team-name-long'}).get_text(strip=True)
+        teams.append(team_name_long)
+
+    return teams
+
 if __name__ == "__main__":
 
     chrome_options = Options()
@@ -84,7 +93,7 @@ if __name__ == "__main__":
     #change to whatever date to search
     year = 2024
     month = 1
-    day = 10
+    day = 28
     
     url = create_url(year, month, day)
     html = fetch_content(url)
@@ -103,6 +112,8 @@ if __name__ == "__main__":
                 driver.get(game_link)
 
                 try:
+                    teams = parse_html_for_teams(driver.page_source)
+
                     home_team_header = WebDriverWait(driver, 30).until(
                         EC.presence_of_element_located((By.CSS_SELECTOR, '.boxscore-team-selector-team.home'))
                     )
@@ -121,8 +132,8 @@ if __name__ == "__main__":
                                "Assists", "Service Aces", "Service Errors", "Reception Errors", "Digs", "Block Solo",
                                "Block Assists", "Block Errors", "Ball Handling Errors", "Points"]
 
-                    home_team_df = html_to_dataframe(home_team_html, headers, 'Home')
-                    visitor_team_df = html_to_dataframe(visitor_team_html, headers, 'Visitor')
+                    home_team_df = html_to_dataframe(home_team_html, headers, teams[1])
+                    visitor_team_df = html_to_dataframe(visitor_team_html, headers, teams[0])
 
                     # Check if DataFrames are not empty before concatenating
                     if not home_team_df.empty and not visitor_team_df.empty:
@@ -147,5 +158,3 @@ if __name__ == "__main__":
                 print("No valid games found.")
     else:
         print("No games today or unable to fetch HTML content.")
-
-
