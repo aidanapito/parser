@@ -57,7 +57,8 @@ def get_team_html(driver, team_table_class):
         print(f"Error: Could not find {team_table_class} table for the team.")
         return None
 
-def html_to_dataframe(html, headers, team_name):
+
+def html_to_dataframe(html, headers, teams):
     try:
         # Convert HTML to dataframe
         team_df = pd.read_html(html)[0]
@@ -66,8 +67,13 @@ def html_to_dataframe(html, headers, team_name):
         # Exclude the totals row
         team_df = team_df[team_df['Number'] != 'Total']
 
-        # Add a column for the team name
-        team_df['Team'] = team_name
+        # Add columns for the team names
+        team_df['Team'] = teams[1]
+        team_df['Opponent'] = teams[0]
+
+        # Reorder columns, moving 'Team' to the front
+        columns_order = ['Team'] + headers[:-1] + ['Opponent']  # Exclude the last column 'Points'
+        team_df = team_df[columns_order]
 
         return team_df
 
@@ -93,7 +99,7 @@ if __name__ == "__main__":
     #change to whatever date to search
     year = 2024
     month = 1
-    day = 28
+    day = 17
     
     url = create_url(year, month, day)
     html = fetch_content(url)
@@ -129,11 +135,11 @@ if __name__ == "__main__":
                     visitor_team_html = get_team_html(driver, 'boxscore-table_player_visitor')
 
                     headers = ["Number", "Name", "Sets", "Kills", "Errors", "Total Attempts", "Hit Percentage",
-                               "Assists", "Service Aces", "Service Errors", "Reception Errors", "Digs", "Block Solo",
-                               "Block Assists", "Block Errors", "Ball Handling Errors", "Points"]
+                            "Assists", "Service Aces", "Service Errors", "Reception Errors", "Digs", "Block Solo",
+                            "Block Assists", "Block Errors", "Ball Handling Errors", "Points"]
 
-                    home_team_df = html_to_dataframe(home_team_html, headers, teams[1])
-                    visitor_team_df = html_to_dataframe(visitor_team_html, headers, teams[0])
+                    home_team_df = html_to_dataframe(home_team_html, headers, teams)
+                    visitor_team_df = html_to_dataframe(visitor_team_html, headers, teams)
 
                     # Check if DataFrames are not empty before concatenating
                     if not home_team_df.empty and not visitor_team_df.empty:

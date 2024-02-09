@@ -145,6 +145,8 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://www.neumannathletics.com/sports/mens-volleyball/stats/2024#individual', 'Neumann', 'NeumannCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://goprattgo.com/sports/mens-volleyball/stats#individual', 'Pratt', 'PrattCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://goslugs.com/sports/mens-volleyball/stats#individual', 'UCSC', 'UCSCCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://springfieldcollegepride.com/sports/mens-volleyball/stats/2024#individual', 'Springfield', 'SpringfieldCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+     scrapeTeamStats('https://clusports.com/sports/mens-volleyball/stats/2024#individual', 'CalLutheran', 'CalLutheranCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
 
     #MCVL
     scrapeTeamStats('https://adrianbulldogs.com/sports/mens-volleyball/stats#individual', 'Adrian', 'AdrianCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
@@ -175,7 +177,32 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://gogryphons.com/sports/mens-volleyball/stats/2024#individual', 'Sarah Lawrence', 'SarahLawrenceCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://www.oldwestburypanthers.com/sports/mens-volleyball/stats#individual', 'SUNY Old Westbury', 'SUNYOldWestburyCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://www.purchasecollegeathletics.com/sports/mens-volleyball/stats/2024#individual', 'Suny Purchase', 'SunyPurchaseCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://yumacs.com/sports/mens-volleyball/stats/2024#individual', 'Yeshiva', 'YeshivaCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table')]
+    scrapeTeamStats('https://sjliathletics.com/sports/mens-volleyball/stats/2024#individual', 'StJoesLi', 'StJoesLiCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://www.purchasecollegeathletics.com/sports/mens-volleyball/stats/2024#individual', 'Suny Purchase', 'SunyPurchaseCombinedStats.csv', 'dividual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://sjliathletics.com/sports/mens-volleyball/stats/2024#individual', 'StJoesLi', 'StJoesLiCombinedStats.csv', 'dividual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://yumacs.com/sports/mens-volleyball/stats/2024#individual', 'Yeshiva', 'YeshivaCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    
+    #added
+    scrapeTeamStats('https://hwsathletics.com/sports/hobart-volleyball/stats/2024#individual', 'Hobart', 'HobartCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://illinoistechathletics.com/sports/mens-volleyball/stats/2024#individual', 'IllinoisTech', 'IllinoisTechCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://buffalostateathletics.com/sports/mens-volleyball/stats/2024#individual', 'BuffaloState', 'BuffaloStateCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://adrianbulldogs.com/sports/mens-volleyball/stats/2024#individual', 'Adrian', 'AdrianCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://emersonlions.com/sports/mens-volleyball/stats/2024#individual', 'Emerson', 'EmersonCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://athletics.uwsp.edu/sports/mens-volleyball/stats/2024#individual', 'UW-StevensPoint', 'StevensPointCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://athletics.uwsp.edu/sports/mens-volleyball/stats/2024#individual', 'ValleyForge', 'ValleyForgeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://vwuathletics.com/sports/mens-volleyball/stats/2024#individual', 'VirginiaWesleyan', 'VirginiaWesleyanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://thielathletics.com/sports/mens-volleyball/stats/2024#individual', 'Thiel', 'ThielCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://govaliants.com/sports/mens-volleyball/stats/2024#individual', 'Manhattanville', 'ManhattanvilleCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://gochathamcougars.com/sports/mens-volleyball/stats/2024#individual', 'Chatham', 'ChathamCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://calvinknights.com/sports/mens-volleyball/stats/2024#individual', 'Calvin', 'CalvinCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://athletics.houghton.edu/sports/mens-volleyball/stats/2024#individual', 'Houghton', 'HoughtonCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://mbusabercats.com/sports/mens-volleyball/stats/2024#individual', 'MaranthanBaptist', 'MaranthanBaptistCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://sjbkathletics.com/sports/mens-volleyball/stats/2024#individual', 'StJosephsBrooklyn', 'StJosephsBrooklynCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://yorkathletics.com/sports/mens-volleyball/stats/2024#individual', 'York', 'YorkCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    #scrapeTeamStats('', '', 'CombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+
+    
+    ]
 
 # Concatenate the list of team DataFrames
 df_combined_stats = pd.concat(team_dfs, ignore_index=True)

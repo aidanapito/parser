@@ -1,7 +1,7 @@
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup 
 from urllib.parse import urljoin
 import numpy as np
 import requests
@@ -97,8 +97,8 @@ if __name__ == "__main__":
     chrome_options.add_argument('--ignore-certificate-errors')
     
     year = 2024
-    month = 1
-    day = 29
+    month = 2
+    day = 7
 
     url = create_url(year, month, day)
     html = fetch_content(url)

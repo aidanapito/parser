@@ -1,11 +1,6 @@
 import pandas as pd
 import subprocess
 import time
-import os 
-
-
-# Change the working directory to the correct path
-os.chdir("C:/Users/19739/Desktop/java/VolleyballStatParser")
 
 startTime = time.time()
 
