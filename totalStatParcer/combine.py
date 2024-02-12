@@ -8,16 +8,15 @@ def rename_columns(df, suffix):
     return df.rename(columns={col: f'{col}_{suffix}' for col in df.columns})
 
 #run files
-subprocess.run(['python', 'GroupAParser.py'])
-subprocess.run(['python', 'GroupAV2Parser.py'])
-subprocess.run(['python', 'GroupAV3Parser.py'])
-subprocess.run(['python', 'GroupBParser.py'])
-subprocess.run(['python', 'GroupBV2Parser.py'])
-subprocess.run(['python', 'GroupDParser.py'])
+subprocess.run(['python3', './totalStatParcer/GroupAParser.py'])
+subprocess.run(['python3', './totalStatParcer/GroupAV2Parser.py'])
+subprocess.run(['python3', './totalStatParcer/GroupAV3Parser.py'])
+subprocess.run(['python3', './totalStatParcer/GroupBParser.py'])
+subprocess.run(['python3', './totalStatParcer/GroupDParser.py'])
 
 
 # List of CSV files to combine
-csv_files = ['CombinedStatsGroupA.csv','CombinedStatsGroupAV2.csv', 'CombinedStatsGroupAV3.csv', 'CombinedStatsGroupB.csv', 'CombinedStatsGroupBV2.csv', 'CombinedStatsGroupD.csv']
+csv_files = ['CombinedStatsGroupA.csv','CombinedStatsGroupAV2.csv', 'CombinedStatsGroupAV3.csv', 'CombinedStatsGroupB.csv', 'CombinedStatsGroupD.csv']
 
 # Initialize an empty DataFrame
 combined_df = pd.DataFrame()

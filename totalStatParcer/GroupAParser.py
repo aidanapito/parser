@@ -90,12 +90,15 @@ if __name__ == "__main__":
         'https://www.sagegators.com/sports/mvball/2023-24/teams/sage?view=lineup&r=0&pos=',
         'https://wildcats.sunypoly.edu/sports/mvball/2023-24/teams/sunypoly?view=lineup&r=0&pos=',
         'https://www.bethanybison.com/sports/mvball/2023-24/teams/bethanycollege?view=lineup',
-        'https://athletics.carlow.edu/sports/mvball/2023-24/teams/carlow?view=lineup'
+        'https://athletics.carlow.edu/sports/mvball/2023-24/teams/carlow?view=lineup',
+        'https://simpsonathletics.com/sports/mvball/2022-23/teams/simpson?view=lineup',
+        'https://www.fisherfalcons.com/sports/mvball/2023-24/teams/fishercollege?view=lineup&r=0&pos='
+
     ]
 
     # Define manual team names corresponding to the URLs 
-    team_names = ['Wentworth', 'Lasell', 'Penn St Behrend','Juniata', 'Regis','Baldwin Wallace', 'Wittenberg', 'Endicott',
-                  'NVU Johnson' 'Sage', 'Suny Poly', 'Bethany','Carlow']
+    team_names = ['Wentworth', 'Lasell', 'Penn St Behrend', 'Juniata', 'Regis', 'Baldwin Wallace', 'Wittenberg', 'Endicott',
+                  'NVU Johnson', 'Sage', 'Suny Poly', 'Bethany', 'Carlow', 'Simpson', 'Fisher']
 
     # Parse and concatenate data for multiple teams
     result_df = parse_and_concat_teams(team_urls, team_names)

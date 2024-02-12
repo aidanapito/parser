@@ -63,10 +63,10 @@ def scrapeTeamStats(url, team_name, output_filename, offensive_selector, defensi
 
 # Create a list of team DataFrames
 #NEED TO CHANGE ALL URLS WITH 2023 TO 2024!!!!
+#FLIP LAST NAMES
 
-team_dfs = [ #THESE ARE AL TYPE BV2
+team_dfs = [ #THESE ARE AL TYPE BV2 
 
-    scrapeTeamStats('https://athletics.mountunion.edu/sports/mens-volleyball/stats#individual', 'Mount Union', 'MountUnionCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     ]
 
 # Concatenate the list of team DataFrames

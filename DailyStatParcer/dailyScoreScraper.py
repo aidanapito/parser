@@ -63,7 +63,7 @@ def parse_html_for_scores(html):
         num_sets = len(linescore_cell_text) // 2  # Assuming each set has two scores (team1 and team2)
 
         # Manually assign headers
-        headers = ['Team', 'Home/Away'] + [f'Score Set {i}' for i in range(1, num_sets + 1)] + ['Final Score', 'Stats Availability']
+        headers = ['Team', 'Home/Away'] + [f'Score Set {i}' for i in range(1, num_sets + 1)] + ['Final Score']
 
         # Create a list to hold the data for each team
         data = [
@@ -71,12 +71,6 @@ def parse_html_for_scores(html):
             [teams[1], home_away_info[1], ''] + linescore_cell_text[num_sets:]
         ]
 
-        # Check if stats are available
-        stats_available = not all(elem == '' for elem in linescore_cell_text)
-
-        # Add stats availability information to the data
-        data[0].append(stats_available)
-        data[1].append(stats_available)
 
         # Create DataFrames for each team
         df_team1 = pd.DataFrame([data[0]], columns=headers)
@@ -94,11 +88,11 @@ def parse_html_for_scores(html):
 
 if __name__ == "__main__":
     chrome_options = Options()
-    chrome_options.add_argument('--ignore-certificate-errors')
+    chrome_options.add_argument('--ignore-certificate-errors') 
     
     year = 2024
     month = 2
-    day = 7
+    day = 11
 
     url = create_url(year, month, day)
     html = fetch_content(url)

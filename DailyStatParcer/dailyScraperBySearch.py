@@ -98,8 +98,8 @@ if __name__ == "__main__":
     
     #change to whatever date to search
     year = 2024
-    month = 1
-    day = 17
+    month = 2
+    day = 11
     
     url = create_url(year, month, day)
     html = fetch_content(url)
