@@ -3,7 +3,7 @@ import glob
 from datetime import datetime, timedelta
 
 # Assuming you have seven daily CSV files in the same directory
-daily_files = glob.glob('daily_stats_*.csv')  # Adjust the file pattern as needed
+daily_files = glob.glob('./CSVs/daily_stats_*.csv')  # Adjust the file pattern as needed
 
 # Create an empty DataFrame to store the accumulated data
 accumulated_df = pd.DataFrame()

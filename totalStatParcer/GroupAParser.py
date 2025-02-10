@@ -78,27 +78,26 @@ def parse_and_concat_teams(team_urls, team_names):
 if __name__ == "__main__":
     # Define URLs for multiple teams
     team_urls = [
-        'https://www.wentworthathletics.com/sports/mvball/2023-24/teams/wentworth?view=lineup&r=0&pos=',
-        'https://laserpride.lasell.edu/sports/mvball/2023-24/teams/lasell?view=lineup&r=0&pos=',
-        'https://www.psblions.com/sports/mvball/2023-24/teams/pennstbehrend?view=lineup&r=0&pos=',
-        'https://www.juniatasports.net/sports/mvball/2023-24/teams/juniatacollege?view=lineup&r=0&pos=',
-        'https://www.goregispride.com/sports/mvball/2023-24/teams/regismass?view=lineup&r=0&pos=',
-        'https://www.bwyellowjackets.com/sports/mvball/2023-24/teams/baldwinwallace?view=lineup&r=0&pos=',
-        'https://wittenbergtigers.com/sports/mvball/2023-24/teams/wittenberg?view=lineup&r=0&pos=',
-        'https://www.ecgulls.com/sports/mvball/2023-24/teams/endicott?view=lineup&r=0&pos=',
-        'https://nvubadgers.com/sports/mvball/2023-24/teams/northernvermontjohnson?view=lineup&r=0&pos=',
-        'https://www.sagegators.com/sports/mvball/2023-24/teams/sage?view=lineup&r=0&pos=',
-        'https://wildcats.sunypoly.edu/sports/mvball/2023-24/teams/sunypoly?view=lineup&r=0&pos=',
-        'https://www.bethanybison.com/sports/mvball/2023-24/teams/bethanycollege?view=lineup',
-        'https://athletics.carlow.edu/sports/mvball/2023-24/teams/carlow?view=lineup',
-        'https://simpsonathletics.com/sports/mvball/2022-23/teams/simpson?view=lineup',
-        'https://www.fisherfalcons.com/sports/mvball/2023-24/teams/fishercollege?view=lineup&r=0&pos='
+        'https://laserpride.lasell.edu/sports/mvball/2024-25/teams/lasell?view=lineup&r=0&pos=',
+        'https://www.juniatasports.net/sports/mvball/2024-25/teams/juniatacollege?view=lineup&r=0&pos=',
+        'https://www.goregispride.com/sports/mvball/2024-25/teams/regismass?view=lineup&r=0&pos=',
+        #'https://www.bwyellowjackets.com/sports/mvball/2024-25/teams/baldwinwallace?view=lineup&r=0&pos=',
+        'https://wittenbergtigers.com/sports/mvball/2024-25/teams/wittenberg?view=lineup&r=0&pos=',
+        'https://www.ecgulls.com/sports/mvball/2024-25/teams/endicott?view=lineup&r=0&pos=',
+        'https://nvubadgers.com/sports/mvball/2024-25/teams/vermontstatejohnson?view=lineup&r=0&pos=',
+        'https://www.sagegators.com/sports/mvball/2024-25/teams/sage?view=lineup&r=0&pos=',
+        #'https://wildcats.sunypoly.edu/sports/mvball/2024-25/teams/sunypoly?view=lineup&r=0&pos=',
+        #'https://simpsonathletics.com/sports/mvball/2022-23/teams/simpson?view=lineup',
+        'https://www.fisherfalcons.com/sports/mvball/2024-25/teams/fishercollege?view=lineup&r=0&pos=',
+        'https://wcbluejays.com/sports/mvball/2024-25/teams/westminstermo?view=lineup&r=0&pos=',
+        'https://www.curryathletics.com/sports/mvball/2024-25/teams/curry?view=lineup&r=0&pos=',
+        'https://www.rivierathletics.com/sports/mvball/2024-25/teams/rivier?view=lineup',
+
 
     ]
 
     # Define manual team names corresponding to the URLs 
-    team_names = ['Wentworth', 'Lasell', 'Penn St Behrend', 'Juniata', 'Regis', 'Baldwin Wallace', 'Wittenberg', 'Endicott',
-                  'NVU Johnson', 'Sage', 'Suny Poly', 'Bethany', 'Carlow', 'Simpson', 'Fisher']
+    team_names = ['Lasell', 'Juniata', 'Regis', 'Wittenberg', 'Endicott', 'NVU Johnson', 'Sage', 'Fisher', 'Westminster', 'Curry', 'Rivier']
 
     # Parse and concatenate data for multiple teams
     result_df = parse_and_concat_teams(team_urls, team_names)
@@ -110,4 +109,4 @@ if __name__ == "__main__":
     result_df_reordered = result_df[desired_order]
 
     # Save the final DataFrame to a CSV file
-    result_df_reordered.to_csv('CombinedStatsGroupA.csv', index=False)
+    result_df_reordered.to_csv('CombinedStatsGroupA2025.csv', index=False)

@@ -90,10 +90,9 @@ if __name__ == "__main__":
     chrome_options = Options()
     chrome_options.add_argument('--ignore-certificate-errors') 
     
-    year = 2024
-    month = 2
-    day = 11
-
+    year = 2025
+    month = 1
+    day = 24
     url = create_url(year, month, day)
     html = fetch_content(url)
 
@@ -127,7 +126,7 @@ if __name__ == "__main__":
             result_df = pd.concat(all_game_data, ignore_index=True)
 
             # Save the result DataFrame to a CSV file without index and header
-            csv_filename = f"DailyGameScores2024.csv"
+            csv_filename = f"DailyGameScores2025.csv"
             result_df.to_csv(csv_filename, index=False)
             print(result_df)
 
