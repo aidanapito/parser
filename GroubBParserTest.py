@@ -5,68 +5,71 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-def scrapeTeamStats(url, team_names, output_filename, offensive_selector, defensive_selector):
-    with webdriver.Chrome() as driver:
-        driver.get(url)
+def scrapeTeamStats(url, team_name, team_csv, offensive_selector, defensive_selector):
+    try:
+        with webdriver.Chrome() as driver:
+            driver.get(url)
 
-        # Use an explicit wait for a specific element to be present on the page
-        offensive_element = (By.CSS_SELECTOR, offensive_selector)
-        WebDriverWait(driver, 30).until(EC.visibility_of_element_located(offensive_element))
+            # Use an explicit wait for a specific element to be present on the page
+            offensive_element = (By.CSS_SELECTOR, offensive_selector)
+            WebDriverWait(driver, 30).until(EC.visibility_of_element_located(offensive_element))
 
-        page_source = driver.page_source
+            page_source = driver.page_source
 
-    soup = BeautifulSoup(page_source, 'html.parser')
-    all_player_rows = soup.select(f'{offensive_selector} tbody tr.odd, {offensive_selector} tbody tr.even, {defensive_selector} tbody tr.odd, {defensive_selector} tbody tr.even')
+        soup = BeautifulSoup(page_source, 'html.parser')
+        all_player_rows = soup.select(
+            f'{offensive_selector} tbody tr.odd, {offensive_selector} tbody tr.even, {defensive_selector} tbody tr.odd, {defensive_selector} tbody tr.even'
+        )
 
-    player_data_offense_list = []
-    player_data_defense_list = []
+        player_data_offense_list = []
+        player_data_defense_list = []
 
-    for row in all_player_rows:
-        full_name = row.select_one('td:nth-of-type(2)').text.strip().split('\n')[0]
-        if ', ' in full_name:
-            first_name, last_name = full_name.split(', ')
-            name = f'{last_name.strip()} {first_name.strip()}'
-        else:
-            name = full_name.strip()
+        for row in all_player_rows:
+            full_name = row.select_one('td:nth-of-type(2)').text.strip().split('\n')[0]
+            if ', ' in full_name:
+                first_name, last_name = full_name.split(', ')
+                name = f'{last_name.strip()} {first_name.strip()}'
+            else:
+                name = full_name.strip()
 
-        jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
+            jersey_number = row.select_one('td:nth-of-type(1)').text.strip()
 
-        if any('offensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
-            player_data_offense = [team_names, name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
-            player_data_offense_list.append(player_data_offense)
-        elif any('defensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
-            player_data_defense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
-            player_data_defense_list.append(player_data_defense)
+            if any('offensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
+                player_data_offense = [team_name, name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+                player_data_offense_list.append(player_data_offense)
+            elif any('defensive' in parent.attrs.get('id', '') for parent in row.find_parents('section')):
+                player_data_defense = [name, jersey_number] + [column.text.strip() for column in row.find_all('td')[2:]]
+                player_data_defense_list.append(player_data_defense)
 
-    offense_columns = ['Team', 'Name', 'Number', 'Sets Played', 'Matches Played', 'Matches Started',
-                        'Points', 'Points/Set', 'Kills', 'Kills/Set', 'Errors', 'Total Attempts',
-                        'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces',
-                        'Service Aces/Set', 'Service Errors', 'ViewBio']
-    defense_columns = ['Name', 'Number', 'Sets Played', 'Digs', 'Digs/Set',
-                        'Receptions Errors', 'Receptions', 'Reception Percentage', 'Reception Errors/Set',
-                        'Block Solo', 'Block Assist', 'Total Blocks', 'Blocks/Set', 'Block Errors',
-                        'BHE', 'ViewBio']
+        offense_columns = ['Team', 'Name', 'Number', 'Sets Played', 'Matches Played', 'Matches Started',
+                            'Points', 'Points/Set', 'Kills', 'Kills/Set', 'Errors', 'Total Attempts',
+                            'Hitting Percentage', 'Assists', 'Assists/Set', 'Service Aces',
+                            'Service Aces/Set', 'Service Errors', 'ViewBio']
+        defense_columns = ['Name', 'Number', 'Sets Played', 'Digs', 'Digs/Set',
+                            'Receptions Errors', 'Receptions', 'Reception Percentage', 'Reception Errors/Set',
+                            'Block Solo', 'Block Assist', 'Total Blocks', 'Blocks/Set', 'Block Errors',
+                            'BHE', 'ViewBio']
 
-    df_offense = pd.DataFrame(player_data_offense_list, columns=offense_columns)
-    df_defense = pd.DataFrame(player_data_defense_list, columns=defense_columns)
+        df_offense = pd.DataFrame(player_data_offense_list, columns=offense_columns)
+        df_defense = pd.DataFrame(player_data_defense_list, columns=defense_columns)
 
-    # Drop unnecessary columns
-    df_offense = df_offense.drop(["Matches Started", "Points", "Points/Set", "Service Errors","ViewBio"], axis=1)
-    df_defense = df_defense.drop(["Name", "Number", "Sets Played", "Reception Percentage",  "Reception Errors/Set", "Block Errors", "BHE", "ViewBio", ], axis=1)
+        # Drop unnecessary columns
+        df_offense = df_offense.drop(["Matches Started", "Points", "Points/Set", "Service Errors","ViewBio"], axis=1)
+        df_defense = df_defense.drop(["Name", "Number", "Sets Played", "Reception Percentage", "Reception Errors/Set", "Block Errors", "BHE", "ViewBio"], axis=1)
 
-    df_offense['Team'] = team_names
+        df_offense['Team'] = team_name
 
-    # Concatenate the DataFrames
-    df_combined_stats = pd.concat([df_offense, df_defense], axis=1)
+        # Concatenate the DataFrames
+        df_combined_stats = pd.concat([df_offense, df_defense], axis=1)
+        
+        return df_combined_stats
+    
+    except Exception as e:
+        print(f"Failed to scrape data for {team_name}. Error: {e}")
+        return None
 
-    return df_combined_stats
-
-# Create a list of team DataFrames
-#NEED TO CHANGE ALL URLS WITH 2024 TO 2024!!!!
 
 team_dfs = [ #THESE ARE AL TYPE B 
-
-    #7 minutes to do 26 teams, should take about 30 minutes to run every team hopefully.
 
     #CVC
     scrapeTeamStats('https://rutgersnewarkathletics.com/sports/mens-volleyball/stats#individual', 'Rutgers', 'RutgersNewarkCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
@@ -105,7 +108,7 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://www.brooklyncollegeathletics.com/sports/mens-volleyball/stats/2025#individual', 'Brooklyn College', 'BrooklynCollegeCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://johnjayathletics.com/sports/mens-volleyball/stats/#individual', 'John Jay', 'JohnJayCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://lehmanathletics.com/sports/mens-volleyball/stats/2025#individual', 'Lehman', 'LehmanCombinedStats.csv','section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://mecathletics.com/sports/mens-volleyball/stats/2025#individual', 'Medgar Evers', 'MedgarEversCombinedStats.csv','section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
+    #scrapeTeamStats('https://mecathletics.com/sports/mens-volleyball/stats/2025#individual', 'Medgar Evers', 'MedgarEversCombinedStats.csv','section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
 
     #GNAC
     scrapeTeamStats('https://deanbulldogs.com/sports/mens-volleyball/stats#individual', 'Dean', 'DeanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
@@ -168,7 +171,7 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://njcugothicknights.com/sports/mens-volleyball/stats/2025#individual', 'NJCU', 'NJCUCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://ramapoathletics.com/sports/mvball/stats/2025#individual', 'Ramapo', 'RamapoCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://gogryphons.com/sports/mens-volleyball/stats/2025#individual', 'Sarah Lawrence', 'SarahLawrenceCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://www.oldwestburypanthers.com/sports/mens-volleyball/stats/2025#individual', 'SUNY Old Westbury', 'SUNYOldWestburyCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    #scrapeTeamStats('https://www.oldwestburypanthers.com/sports/mens-volleyball/stats/2025#individual', 'SUNY Old Westbury', 'SUNYOldWestburyCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://www.purchasecollegeathletics.com/sports/mens-volleyball/stats/2025#individual', 'Suny Purchase', 'SunyPurchaseCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://sjliathletics.com/sports/mens-volleyball/stats/2025#individual', 'StJoesLi', 'StJoesLiCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     
@@ -179,6 +182,7 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://emersonlions.com/sports/mens-volleyball/stats/2025#individual', 'Emerson', 'EmersonCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://athletics.uwsp.edu/sports/mens-volleyball/stats/2025#individual', 'UW-Stevens Point', 'StevensPointCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://vwuathletics.com/sports/mens-volleyball/stats/2025#individual', 'Virginia Wesleyan', 'VirginiaWesleyanCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
+    scrapeTeamStats('https://thielathletics.com/sports/mens-volleyball/stats/2025#individual', 'Thiel', 'ThielCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://govaliants.com/sports/mens-volleyball/stats/2025#individual', 'Manhattanville', 'ManhattanvilleCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://calvinknights.com/sports/mens-volleyball/stats/2025#individual', 'Calvin', 'CalvinCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://athletics.houghton.edu/sports/mens-volleyball/stats/2025#individual', 'Houghton', 'HoughtonCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
@@ -186,7 +190,11 @@ team_dfs = [ #THESE ARE AL TYPE B
     scrapeTeamStats('https://sjbkathletics.com/sports/mens-volleyball/stats/2025#individual', 'St Joes Brooklyn', 'StJoesBrklynCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://athletics.mountunion.edu/sports/mens-volleyball/stats#individual', 'Mount Union', 'MountUnionCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table'),
     scrapeTeamStats('https://averettcougars.com/sports/mens-volleyball/stats/2025#individual', 'Averett', 'AverettCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),
-    scrapeTeamStats('https://goecsaints.com/sports/mens-volleyball/stats/2025#individual', 'Emmanuel Mass', 'EmmanuelMassCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'),     scrapeTeamStats('https://trinethunder.com/sports/mens-volleyball/stats/2025#individual', 'Trine', 'TrineCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
+    scrapeTeamStats('https://springfieldcollegepride.com/sports/mens-volleyball/stats/2025#individual', 'Springfield', 'SpringfieldCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
+    scrapeTeamStats('https://goecsaints.com/sports/mens-volleyball/stats/2025#individual', 'Emmanuel Mass', 'EmmanuelMassCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
+    scrapeTeamStats('https://bwyellowjackets.com/sports/mens-volleyball/stats/2025#individual', 'Baldwin Wallace', 'BaldwinWallaceCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
+    scrapeTeamStats('https://trinethunder.com/sports/mens-volleyball/stats/2025#individual', 'Trine', 'TrineCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
+    scrapeTeamStats('https://nicholsathletics.com/sports/mens-volleyball/stats/2025#individual', 'Nichols', 'NicholsCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
     scrapeTeamStats('https://wildcats.sunypoly.edu/sports/mens-volleyball/stats/2025#individual', 'SunyPoly', 'SunyPolyCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
     scrapeTeamStats('https://warrenwilsonowls.com/sports/mens-volleyball/stats#individual', 'Warren Wilson', 'WarrenWilsonCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
     scrapeTeamStats('https://lynchburgsports.com/sports/mens-volleyball/stats/2025#individual', 'Lynchburg', 'LynchburgCombinedStats.csv', 'section#individual-overall-offensive table.sidearm-table','section#individual-overall-defensive table.sidearm-table'), 
@@ -203,9 +211,16 @@ team_dfs = [ #THESE ARE AL TYPE B
     ]
 
 
-# Concatenate the list of team DataFrames
-df_combined_stats = pd.concat(team_dfs, ignore_index=True)
+combined_data = []
 
-# Write the DataFrame to a CSV file with the 'Team' column and without including the index
-df_combined_stats.to_csv('CombinedStatsGroupB2025.csv', index=False)
+for url, team_name in team_dfs:
+    df_team = scrapeTeamStats(url, team_name, 'section#individual-overall-offensive table.sidearm-table', 'section#individual-overall-defensive table.sidearm-table')
+    if df_team is not None:
+        combined_data.append(df_team)
 
+if combined_data:
+    df_final = pd.concat(combined_data, ignore_index=True)
+    df_final.to_csv('CombinedStatsGroupB2025.csv', index=False)
+    print("Scraping completed successfully. Data saved to CombinedStatsGroupB2025.csv")
+else:
+    print("No data was successfully scraped.")
