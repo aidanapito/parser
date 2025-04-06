@@ -81,7 +81,6 @@ if __name__ == "__main__":
         'https://laserpride.lasell.edu/sports/mvball/2024-25/teams/lasell?view=lineup&r=0&pos=',
         'https://www.juniatasports.net/sports/mvball/2024-25/teams/juniatacollege?view=lineup&r=0&pos=',
         'https://www.goregispride.com/sports/mvball/2024-25/teams/regismass?view=lineup&r=0&pos=',
-        #'https://www.bwyellowjackets.com/sports/mvball/2024-25/teams/baldwinwallace?view=lineup&r=0&pos=',
         'https://wittenbergtigers.com/sports/mvball/2024-25/teams/wittenberg?view=lineup&r=0&pos=',
         'https://www.ecgulls.com/sports/mvball/2024-25/teams/endicott?view=lineup&r=0&pos=',
         'https://nvubadgers.com/sports/mvball/2024-25/teams/vermontstatejohnson?view=lineup&r=0&pos=',
