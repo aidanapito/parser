@@ -33,7 +33,7 @@ https://www.wentworthathletics.com/sports/mvball/2025-26/roster
 https://wittenbergtigers.com/sports/mvball/2025-26/roster
 """
 
-COLUMNS = ['name', 'school', 'position', 'class', 'town', 'highschool', 'major', 'height']
+COLUMNS = ['name', 'number', 'school', 'position', 'class', 'town', 'highschool', 'major', 'height']
 
 
 def url_to_school(url: str) -> str:
@@ -103,6 +103,7 @@ def _parse_presto_table(soup: BeautifulSoup, school: str) -> list[dict]:
                 return _strip_prefix(tds[i].get_text(strip=True).replace('\n', ' ').replace('\t', ' '), prefixes)
 
             # Column layout varies: 8-col [No,Pos,Cl,Ht,Wt,Hometown/HS,Club,Major] or 5-col [No,Pos,Cl,Ht,Hometown/HS]
+            number = cell(0, ['No.:', 'No.']) if tds else ''
             pos = cell(1, ['Pos.:', 'Pos.'])
             cl = cell(2, ['Cl.:', 'Cl.'])
             ht = cell(3, ['Ht.:', 'Ht.'])
@@ -122,6 +123,7 @@ def _parse_presto_table(soup: BeautifulSoup, school: str) -> list[dict]:
 
             roster_data.append({
                 'name': player_name,
+                'number': number,
                 'school': school,
                 'position': pos,
                 'class': cl,

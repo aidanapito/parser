@@ -1,6 +1,6 @@
 """
 Roster scraper for 2026 mens volleyball - uses Selenium for JS-rendered pages.
-Extracts: name, school, position, class, town, highschool, major, height
+Extracts: name, number, school, position, class, town, highschool, major, height
 Continues on team failures without stopping.
 """
 
@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import pandas as pd
 
-# Roster URLs - load from this file or use ROSTER_URLS below
+# Roster URLs - Sidearm Sports card layout
 ROSTER_URLS = """
 https://adrianbulldogs.com/sports/mens-volleyball/roster
 https://arcadiaknights.com/sports/mens-volleyball/roster?view=3
@@ -137,29 +137,19 @@ https://yumacs.com/sports/mens-volleyball/roster?view=3
 https://yorkathletics.com/sports/mens-volleyball/roster?view=3
 """
 
-COLUMNS = ['name', 'school', 'position', 'class', 'town', 'highschool', 'major', 'height']
+COLUMNS = ['name', 'number', 'school', 'position', 'class', 'town', 'highschool', 'major', 'height']
 
 
 def url_to_school(url: str) -> str:
     """Derive school name from roster URL domain."""
     parsed = urlparse(url)
     host = (parsed.netloc or url).lower()
-    # Remove www.
     if host.startswith('www.'):
         host = host[4:]
-    # athletics.X.edu -> X, www.X.com -> X
     if host.startswith('athletics.'):
         host = host.split('.', 1)[1]
-    # Get the main subdomain/domain before .edu/.com
     parts = host.replace('.edu', '').replace('.com', '').split('.')
-    # e.g. baruch.cuny -> baruch, stevensducks -> stevensducks
     main = parts[0] if parts else host
-    # Clean common suffixes
-    for suffix in ('athletics', 'sports', 'college', 'go', 'goc'):
-        if main.endswith(suffix) and len(main) > len(suffix):
-            main = main
-        elif main == suffix and len(parts) > 1:
-            main = parts[1]
     return main.replace('-', ' ').title()
 
 
@@ -170,7 +160,7 @@ def _text(el, default=''):
 
 
 def _parse_sidearm_cards(soup: BeautifulSoup, school: str) -> list[dict]:
-    """Parse Sidearm card layout: #sidearm-m-roster or .sidearm-roster-players-container + .sidearm-list-card-item"""
+    """Parse Sidearm card layout."""
     roster_data = []
     containers = [
         soup.select('#sidearm-m-roster .sidearm-list-card-item'),
@@ -189,7 +179,6 @@ def _parse_sidearm_cards(soup: BeautifulSoup, school: str) -> list[dict]:
         if 'coach' in _text(item).lower()[:100] or 'staff' in _text(item).lower()[:100]:
             continue
         try:
-            # Name: first + last or single name field
             first = item.select_one('.sidearm-roster-player-first-name')
             last = item.select_one('.sidearm-roster-player-last-name')
             if first or last:
@@ -199,16 +188,16 @@ def _parse_sidearm_cards(soup: BeautifulSoup, school: str) -> list[dict]:
                 name = _text(name_el)
             if not name:
                 continue
+            number = _text(item.select_one('.sidearm-roster-player-jersey span') or item.select_one('.sidearm-roster-player-jersey-number'))
             pos_el = item.select_one('.sidearm-roster-player-position-short') or item.select_one('.sidearm-roster-player-position')
             position = _text(pos_el)
-            if len(position) > 10 or '\t' in position:  # Long text or tabs - take short code like OH, MH
+            if len(position) > 10 or '\t' in position:
                 match = re.search(r'\b([A-Z]{2,4}(?:\s*/\s*[A-Z]{2,4})*)\b', position)
                 position = match.group(1) if match else position[:20]
             acad_year = _text(item.select_one('.sidearm-roster-player-academic-year'))
             town = _text(item.select_one('.sidearm-roster-player-hometown'))
             highschool = _text(item.select_one('.sidearm-roster-player-highschool'))
             height = _text(item.select_one('.sidearm-roster-player-height'))
-            # Major: sidearm-roster-player-major, custom1/custom2, or extract from academic-year if combined
             major = _text(item.select_one('.sidearm-roster-player-major') or item.select_one('.sidearm-roster-player-custom1') or item.select_one('.sidearm-roster-player-custom2'))
             if not major and acad_year:
                 for prefix in ('Jr.', 'Sr.', 'So.', 'Fr.', 'Fy.', 'Gr.', 'Junior', 'Senior', 'Sophomore', 'Freshman', 'First-Year', 'Graduate'):
@@ -216,10 +205,10 @@ def _parse_sidearm_cards(soup: BeautifulSoup, school: str) -> list[dict]:
                         rest = acad_year[len(prefix):].strip()
                         if rest and len(rest) > 2 and rest[0].isalpha():
                             major = rest
-                            acad_year = prefix  # keep only class for class field
+                            acad_year = prefix
                         break
             roster_data.append({
-                'name': name, 'school': school, 'position': position,
+                'name': name, 'number': number, 'school': school, 'position': position,
                 'class': acad_year, 'town': town, 'highschool': highschool,
                 'major': major, 'height': height
             })
@@ -229,13 +218,13 @@ def _parse_sidearm_cards(soup: BeautifulSoup, school: str) -> list[dict]:
 
 
 def _parse_sidearm_table(soup: BeautifulSoup, school: str) -> list[dict]:
-    """Parse roster table (common on Sidearm view=2 or embedded table)."""
+    """Parse roster table (Sidearm view=2 or embedded table)."""
     roster_data = []
     table = soup.select_one('table.rotatable_table tbody') or soup.select_one('table tbody')
     if not table:
         return []
     rows = table.select('tr')
-    col_map = {}  # idx -> field name
+    col_map = {}
     for row in rows:
         cells = row.find_all(['td', 'th'])
         if not cells:
@@ -244,7 +233,9 @@ def _parse_sidearm_table(soup: BeautifulSoup, school: str) -> list[dict]:
         if 'name' in first_text or first_text in ('#', 'no', 'no.', ''):
             headers = [c.get_text(strip=True).lower() for c in cells]
             for i, h in enumerate(headers):
-                if 'pos' in h or h == 'pos.':
+                if h in ('#', 'no', 'no.') or 'number' in h:
+                    col_map['no'] = i
+                elif 'pos' in h or h == 'pos.':
                     col_map['pos'] = i
                 elif 'cl' in h or 'class' in h:
                     col_map['class'] = i
@@ -264,6 +255,7 @@ def _parse_sidearm_table(soup: BeautifulSoup, school: str) -> list[dict]:
         if not name or len(name) < 3 or any(x in name.lower() for x in ['coach', 'coordinator', 'director']):
             continue
         texts = [c.get_text(strip=True) for c in cells]
+        number = texts[col_map['no']] if 'no' in col_map and col_map['no'] < len(texts) else ''
         pos = texts[col_map['pos']] if 'pos' in col_map and col_map['pos'] < len(texts) else ''
         cl = texts[col_map['class']] if 'class' in col_map and col_map['class'] < len(texts) else ''
         ht = texts[col_map['ht']] if 'ht' in col_map and col_map['ht'] < len(texts) else ''
@@ -273,10 +265,11 @@ def _parse_sidearm_table(soup: BeautifulSoup, school: str) -> list[dict]:
             town = parts[0].strip()
             hs = parts[1].strip() if len(parts) > 1 else ''
         major = texts[col_map['major']] if 'major' in col_map and col_map['major'] < len(texts) else ''
-        # Fallback: pattern match if no header found
         if not col_map:
             for t in texts:
-                if not cl and re.match(r'^(Fr|So|Jr|Sr|Fy|Gr)\.?$', t, re.I):
+                if not number and re.match(r'^\d+$', t) and len(t) <= 3:
+                    number = t
+                elif not cl and re.match(r'^(Fr|So|Jr|Sr|Fy|Gr)\.?$', t, re.I):
                     cl = t
                 elif not ht and re.match(r'^\d-\d+$|^\d\'\d+"', t):
                     ht = t
@@ -288,7 +281,7 @@ def _parse_sidearm_table(soup: BeautifulSoup, school: str) -> list[dict]:
                 elif not major and len(t) > 5 and not re.match(r'^\d+$', t):
                     major = t
         roster_data.append({
-            'name': name, 'school': school, 'position': pos,
+            'name': name, 'number': number, 'school': school, 'position': pos,
             'class': cl, 'town': town, 'highschool': hs,
             'major': major, 'height': ht
         })
@@ -296,9 +289,9 @@ def _parse_sidearm_table(soup: BeautifulSoup, school: str) -> list[dict]:
 
 
 def scrape_roster_url(driver, url: str) -> list[dict]:
-    """Scrape a single roster URL. Returns list of player dicts."""
-    school = url_to_school(url)
+    """Scrape a single roster URL."""
     import time
+    school = url_to_school(url)
     driver.get(url)
     try:
         WebDriverWait(driver, 15).until(

@@ -90,7 +90,7 @@ if __name__ == "__main__":
         'https://www.fisherfalcons.com/sports/mvball/2024-25/teams/fishercollege?view=lineup&r=0&pos=',
         'https://wcbluejays.com/sports/mvball/2024-25/teams/westminstermo?view=lineup&r=0&pos=',
         'https://www.curryathletics.com/sports/mvball/2024-25/teams/curry?view=lineup&r=0&pos=',
-        'https://www.rivierathletics.com/sports/mvball/2024-25/teams/rivier?view=lineup',
+        'https://rivierathletics.com/sports/mens-volleyball/stats/2025/curry?view=lineup&r=0&pos=',
 
 
     ]
