@@ -66,18 +66,18 @@ teams = [
     {'url': 'https://roanokemaroons.com/sports/mens-volleyball/roster', 'name': 'Roanoke', 'selector': '.sidearm-roster-players-container'},
     {'url': 'https://etownbluejays.com/sports/mens-volleyball/roster', 'name': 'Elizabethtown', 'selector': '.sidearm-roster-players-container'},
     {'url': 'https://gomightymacs.com/sports/mens-volleyball/roster', 'name': 'Immaculata', 'selector': '.sidearm-roster-players-container'},
-    #{'url': 'https://athletics.misericordia.edu/sports/mens-volleyball/roster?view=3', 'name': 'Misericordia', 'selector': '.sidearm-roster-players-container'},
-    #{'url': 'https://athletics.baruch.cuny.edu/sports/mens-volleyball/roster?view=3', 'name': 'Baruch', 'selector': '.sidearm-roster-players-container'},
-    #{'url': 'https://mountieathletics.com/sports/mens-volleyball/roster?view=3', 'name': 'Mount Aloysius', 'selector': '.sidearm-roster-players-container'},
-    #{'url': 'https://www.cairnhighlanders.com/sports/mens-volleyball/roster?view=3', 'name': 'Cairn', 'selector': '.sidearm-roster-players-container'},
-    #{'url': 'https://seueagles.com/sports/mens-volleyball/roster?view=3', 'name': 'St Elizabeth', 'selector': '.sidearm-roster-players-container'},
-    #{'url': 'https://www.iwusports.com/sports/mens-volleyball/roster?view=3', 'name': 'Illinois Wesleyan', 'selector': '.sidearm-roster-players-container'},
-    #{'url': 'https://drewrangers.com/sports/mvball/roster?view=3', 'name': 'Drew', 'selector': '.sidearm-roster-players-container'},
+    {'url': 'https://athletics.misericordia.edu/sports/mens-volleyball/roster?view=3', 'name': 'Misericordia', 'selector': '.sidearm-roster-players-container'},
+    {'url': 'https://athletics.baruch.cuny.edu/sports/mens-volleyball/roster?view=3', 'name': 'Baruch', 'selector': '.sidearm-roster-players-container'},
+    {'url': 'https://mountieathletics.com/sports/mens-volleyball/roster?view=3', 'name': 'Mount Aloysius', 'selector': '.sidearm-roster-players-container'},
+    {'url': 'https://www.cairnhighlanders.com/sports/mens-volleyball/roster?view=3', 'name': 'Cairn', 'selector': '.sidearm-roster-players-container'},
+    {'url': 'https://seueagles.com/sports/mens-volleyball/roster?view=3', 'name': 'St Elizabeth', 'selector': '.sidearm-roster-players-container'},
+    {'url': 'https://www.iwusports.com/sports/mens-volleyball/roster?view=3', 'name': 'Illinois Wesleyan', 'selector': '.sidearm-roster-players-container'},
+    {'url': 'https://drewrangers.com/sports/mvball/roster?view=3', 'name': 'Drew', 'selector': '.sidearm-roster-players-container'},
     {'url': 'https://lbcchargers.com/sports/mens-volleyball/roster?view=3', 'name': 'Lancaster Bible', 'selector': '.sidearm-roster-players-container'},
-    #{'url': 'https://www.neumannathletics.com/sports/mens-volleyball/roster?view=3', 'name': 'Neumann', 'selector': '.sidearm-roster-players-container'},
+    {'url': 'https://www.neumannathletics.com/sports/mens-volleyball/roster?view=3', 'name': 'Neumann', 'selector': '.sidearm-roster-players-container'},
     {'url': 'https://springfieldcollegepride.com/sports/mens-volleyball/roster?view=3', 'name': 'Springfield', 'selector': '.sidearm-roster-players-container'},
 ]
-
+#6
 # Process each team
 all_rosters = []
 
