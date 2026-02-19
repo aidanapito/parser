@@ -62,20 +62,105 @@ def _strip_prefix(s: str, prefixes: list) -> str:
     return s.strip()
 
 
+# Prefixes to strip from cell values (different sites use different labels)
+CELL_PREFIXES = {
+    'number': ['Number:', 'No.:', 'No.'],
+    'position': ['Position:', 'Pos.:', 'Pos.'],
+    'class': ['Class:', 'Cl.:', 'Cl.', 'Yr.:', 'Yr.'],
+    'height': ['Height:', 'Ht.:', 'Ht.'],
+    'town_hs': ['Hometown/High School:', 'Hometown/High School', 'Hometown/Previous School:',
+                'Hometown/Previous School', 'Hometown:', 'High School:', 'Hometown / High School:'],
+    'major': ['Major:', 'Minor:', 'Major/Minor:'],
+}
+
+
+def _has_redundant_no_column(tds: list) -> bool:
+    """Some sites (Psaltoonalions, Simpson) have td[0]=number and td[1]='No.:1' - redundant."""
+    if len(tds) < 2:
+        return False
+    first = (tds[0].get_text() or '').strip()
+    second = (tds[1].get_text() or '').strip()
+    if not first or not second:
+        return False
+    # First td is plain number, second starts with No.: / Number:
+    if not re.match(r'^\d+$', first):
+        return False
+    for p in ['No.:', 'No.', 'Number:', 'Number']:
+        if second.startswith(p):
+            return True
+    return False
+
+
+def _map_headers_to_indices(header_texts: list[str], tds: list = None) -> dict[str, int]:
+    """Map table header text to td column index. Name is in th, so td order matches header order.
+    Handles sites with redundant 'No.:N' column (Psaltoonalions, Simpson) by shifting indices."""
+    col_map = {}
+    td_idx = 0
+    # If first row has redundant No. column (td[0]=number, td[1]=No.:number), we skip td[1]
+    skip_index_1 = False
+    if tds and _has_redundant_no_column(tds):
+        skip_index_1 = True
+    for h in header_texts:
+        h_lower = (h or '').lower().strip()
+        if not h_lower or h_lower == 'name':
+            continue
+        # When we have a redundant No. column, indices 1+ map to td 2+
+        effective_idx = td_idx + (1 if skip_index_1 and td_idx >= 1 else 0)
+        if h_lower in ('no.', 'no', '#') or 'number' in h_lower:
+            col_map['number'] = 0  # Always first td when present
+        elif h_lower in ('pos.', 'pos') or 'position' in h_lower:
+            col_map['position'] = effective_idx
+        elif h_lower in ('cl.', 'cl', 'class') or h_lower in ('yr.', 'yr'):
+            col_map['class'] = effective_idx
+        elif h_lower in ('ht.', 'ht') or 'height' in h_lower:
+            col_map['height'] = effective_idx
+        elif 'hometown' in h_lower or ('high school' in h_lower and 'club' not in h_lower) or 'previous school' in h_lower:
+            col_map['town_hs'] = effective_idx
+        elif ('major' in h_lower or 'minor' in h_lower) and 'club' not in h_lower:
+            col_map['major'] = effective_idx
+        td_idx += 1
+    return col_map
+
+
 def _parse_presto_table(soup: BeautifulSoup, school: str) -> list[dict]:
-    """Parse PrestoSports table layout (.roster table, or table tbody)."""
+    """Parse PrestoSports table layout - uses header row to map columns reliably."""
     roster_data = []
-    table = soup.select_one('.roster table tbody') or soup.select_one('table tbody')
+    table = soup.select_one('.roster table') or soup.select_one('table')
     if not table:
         return []
 
-    rows = table.find_all('tr')
+    # Get header row from thead or first tr of tbody
+    header_texts = []
+    thead = table.find('thead')
+    if thead:
+        header_row = thead.find('tr')
+        if header_row:
+            for cell in header_row.find_all(['th', 'td']):
+                header_texts.append(cell.get_text(strip=True))
+    tbody = table.select_one('tbody') or table
+    rows = tbody.find_all('tr')
+    # Use first row's tds to detect redundant No. column (Psaltoonalions, Simpson)
+    first_row_tds = []
+    for r in rows:
+        tds = r.find_all('td')
+        if len(tds) >= 2:
+            first_row_tds = tds
+            break
+    col_map = _map_headers_to_indices(header_texts, first_row_tds)
+
+    # Fallback: if no header mapping, infer from common layouts
+    if not col_map and rows:
+        first_tds = rows[0].find_all('td')
+        n = len(first_tds)
+        col_map = {'number': 0, 'position': 1, 'class': 2, 'height': 3, 'town_hs': 5 if n >= 6 else 4}
+        if n > 7:
+            col_map['major'] = 7
+
     for row in rows:
         try:
             name_cell = row.find('th', class_='name') or row.find('th', attrs={'data-label': re.compile(r'name', re.I)}) or row.find('th')
             if not name_cell:
                 continue
-            # Name from aria-label ("Temmy Argynbay: jersey number 1: full bio") or link text
             player_name = ''
             for a in name_cell.find_all('a'):
                 if a.get('aria-label'):
@@ -94,30 +179,32 @@ def _parse_presto_table(soup: BeautifulSoup, school: str) -> list[dict]:
                 continue
 
             tds = row.find_all('td')
-            if len(tds) < 4:
+            if len(tds) < 3:
                 continue
 
-            def cell(i: int, prefixes: list) -> str:
-                if i >= len(tds):
+            def get_cell(field: str) -> str:
+                idx = col_map.get(field)
+                if idx is None or idx >= len(tds):
                     return ''
-                return _strip_prefix(tds[i].get_text(strip=True).replace('\n', ' ').replace('\t', ' '), prefixes)
+                raw = tds[idx].get_text(strip=True).replace('\n', ' ').replace('\t', ' ')
+                prefixes = CELL_PREFIXES.get(field, [])
+                return _strip_prefix(raw, prefixes)
 
-            # Column layout varies: 8-col [No,Pos,Cl,Ht,Wt,Hometown/HS,Club,Major] or 5-col [No,Pos,Cl,Ht,Hometown/HS]
-            number = cell(0, ['No.:', 'No.']) if tds else ''
-            pos = cell(1, ['Pos.:', 'Pos.'])
-            cl = cell(2, ['Cl.:', 'Cl.'])
-            ht = cell(3, ['Ht.:', 'Ht.'])
-            town = highschool = major = ''
-            # Hometown/HS at index 4 or 5 (5-col vs 8-col)
-            hometown_idx = 5 if len(tds) >= 6 else 4
-            hometown_raw = cell(hometown_idx, ['Hometown/High School:', 'Hometown/High School'])
-            hometown_raw = hometown_raw.replace('\r', ' ').replace('\n', ' ').strip()
-            town, highschool = hometown_raw.split('/', 1) if '/' in hometown_raw else (hometown_raw, '')
-            town = town.strip()
-            highschool = highschool.strip()
-            major = cell(7, ['Major:']) if len(tds) > 7 else ''
+            number = get_cell('number')
+            pos = get_cell('position')
+            cl = get_cell('class')
+            ht = get_cell('height')
+            town = highschool = ''
+            town_hs_raw = get_cell('town_hs').replace('\r', ' ').strip()
+            if town_hs_raw and '/' in town_hs_raw:
+                parts = town_hs_raw.split('/', 1)
+                town = parts[0].strip()
+                highschool = parts[1].strip() if len(parts) > 1 else ''
+            elif town_hs_raw:
+                town = town_hs_raw
+            major = get_cell('major')
 
-            # Normalize height (6-5 -> 6'5" if needed for consistency)
+            # Normalize height
             if ht and '-' in ht and '"' not in ht:
                 ht = ht.replace('-', "'") + '"'
 
